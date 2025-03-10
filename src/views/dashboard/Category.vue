@@ -1,7 +1,7 @@
 <template>
     <div class="w-full overflow-hidden bg-white rounded-lg">
         <div class="rounded-t-lg p-3 flex justify-between items-center">
-            <div class="ml-5 md:ml-18">
+            <div class="ml-5 md:ml-18 text-gray-900">
                 <span>分类列表</span>
             </div>
             <div class="mr-5 md:mr-18">

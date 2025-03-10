@@ -22,6 +22,15 @@ axios.interceptors.request.use(config => {
 
 // 创建app实例
 const app = createApp(App);
+// 定义项目名称和状态信息
+const projectStatus = {
+    version: "1.0.0",
+    status: "Running",
+    description: "BLOG项目.",
+    author: "JiuLiuTOP",
+    repository: "https://github.com/DCSCDF/jiuliutop-BLOG_webAPP"
+};
+console.table(projectStatus);
 
 app.provide("message", message);
 app.provide("notification", notification);

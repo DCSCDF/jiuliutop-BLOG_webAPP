@@ -20,7 +20,7 @@
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">在此管理你的账户更改设置。</p>
                 </div>
                 <div class="mt-6 menus md:flex md:items-center md:justify-between">
-                    <div class="flex flex-wrap rounded-lg dark:bg-gray-900 dark:border-gray-700">
+                    <div class="flex flex-wrap rounded-lg dark:border-gray-700">
                         <n-button v-for="(menu, index) in menus" :key="index" @click="topage(menu.href)" tertiary
                             style="margin: 0px 10px;">
                             {{ menu.name }}
@@ -127,6 +127,13 @@ const getImageUrl = (name) => {
 </script>
 
 <style scoped>
+@media (prefers-color-scheme: dark) {
+    .n-button {
+        background-color: color-mix(in oklab, var(--color-white) 10%, transparent) !important;
+        color: #E5E7EB !important;
+    }
+}
+
 .menus {
     display: flex;
     flex-wrap: wrap;

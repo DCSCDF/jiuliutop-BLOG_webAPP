@@ -1,108 +1,130 @@
 <template>
 
     <div class="flex flex-col min-h-screen">
-        <Header></Header>
-        <main class="mb-auto">
-            <div class="container px-6 pt-10 py-2 mx-auto lg:w-6xl">
-                <div class="items-center lg:flex">
-                    <div class="w-full lg:w-1/2">
-                        <div class="lg:max-w-xl">
-                            <h1 class="text-3xl font-semibold text-gray-800 dark:text-white lg:text-5xl">Wellcome！ <br>
-                                欢迎来到 {{ settingsData?.webname }}</h1>
-                            <p class="mt-3 text-wrap lg:mr-10 text-gray-600 dark:text-gray-400">
-                                {{ settingsData?.webcontent }}
-                            </p>
-                            <div class="my-6">
-                                <!-- <n-button color="#6b7281" style="width: 100px;">关于我</n-button> -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="hidden lg:block items-center justify-center mt-6 lg:mt-0 w-auto max-w-xl lg:w-1/2">
-                        <div ref="modelContainer" class="w-full h-96"></div>
-                    </div>
+        <!-- 加载动画 -->
+        <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
+            <!-- <n-spin size="large" :theme-overrides="themeOverrides" /> -->
+            <div id="loadingScreen"
+                class="fixed inset-0 flex items-center justify-center z-50 bg-gray-100 dark:bg-gray-800">
+                <div class="loading">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
                 </div>
             </div>
-            <!--             <div class="relative  mx-auto">
-            </div> -->
-            <n-layout class=" py-4 px-2 md:px-10" style="background-color: rgba(0,0,0,0);">
-                <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
-                    <!-- 左侧主内容区 -->
-                    <!-- 左侧主内容区 -->
-                    <div class="flex-1 space-y-6">
-                        <!-- 如果文章数量为空，显示红色报错信息 -->
-                        <div v-if="blogListInfo.length === 0"
-                            class="text-gray-800 dark:text-gray-400 text-center text-2xl">
-                            该分类没有找到相关文章！
+        </div>
+        <!-- 错误提示 -->
+        <div v-else-if="isError" class="flex justify-center items-center min-h-screen">
+            <n-result status="error" title="API加载失败" description="请稍后重试或联系管理员">
+                <template #footer>
+                    <n-button type="primary" @click="retryLoading" :theme-overrides="themeOverrides">重试</n-button>
+                </template>
+            </n-result>
+        </div>
+        <!-- 正常内容 -->
+        <template v-else>
+            <Header></Header>
+            <main class="mb-auto">
+                <div class="container px-6 pt-10 py-2 mx-auto lg:w-6xl">
+                    <div class="items-center lg:flex">
+                        <div class="w-full lg:w-1/2 mt-10">
+                            <div class="lg:max-w-xl">
+                                <h1 class="text-3xl font-semibold text-gray-800 dark:text-white lg:text-5xl">Wellcome！
+                                    <br>
+                                    欢迎来到 {{ settingsData?.webname }}
+                                </h1>
+                                <p class="mt-3 text-wrap lg:mr-10 text-gray-600 dark:text-gray-400">
+                                    {{ settingsData?.webcontent }}
+                                </p>
+                                <div class="my-6">
+                                    <!-- <n-button color="#6b7281" style="width: 100px;">关于我</n-button> -->
+                                </div>
+                            </div>
                         </div>
-                        <!-- 如果文章数量不为空，显示文章列表 -->
-                        <template v-else>
-                            <n-card c v-for="(blog, index) in blogListInfo" :key="index" :content-style="{ padding: 0 }"
-                                @click="toDetail(blog)">
-                                <div class="p-5 flex flex-row">
-                                    <!-- 图片区域 -->
-                                    <div class="md:w-50 w-30 h-36 flex-shrink-0 mr-3">
-                                        <img class="object-cover w-full h-full rounded-md" :src="blog.imageUrl"
-                                            alt="文章封面" />
-                                    </div>
-                                    <!-- 内容区域 -->
-                                    <div class="flex-1 flex flex-col z-20 justify-between">
-                                        <!-- 顶部内容 -->
-                                        <div>
-                                            <h1
-                                                class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3 line-clamp-1">
-                                                {{ blog.title }}
-                                            </h1>
-                                            <p class="text-gray-500 dark:text-gray-500 h-18 line-clamp-3">
-                                                {{ blog.content }}
-                                            </p>
+                        <!-- 暂时隐藏模型 需要显示可以在class里面加上lg:block -->
+                        <div class="hidden items-center justify-center mt-6 lg:mt-0 w-auto max-w-xl lg:w-1/2">
+                            <div ref="modelContainer" class="w-full h-96"></div>
+                        </div>
+                    </div>
+                </div>
+                <n-layout class=" py-4 px-2 md:px-10" style="background-color: rgba(0,0,0,0);">
+                    <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
+                        <!-- 左侧主内容区 -->
+                        <div class="flex-1 space-y-6">
+                            <!-- 如果文章数量为空，显示红色报错信息 -->
+                            <div v-if="blogListInfo.length === 0"
+                                class="text-gray-800 dark:text-gray-400 text-center text-2xl">
+                                该分类没有找到相关文章！
+                            </div>
+                            <!-- 如果文章数量不为空，显示文章列表 -->
+                            <template v-else>
+                                <n-card c v-for="(blog, index) in blogListInfo" :key="index"
+                                    :content-style="{ padding: 0 }" @click="toDetail(blog)">
+                                    <div class="p-5 flex flex-row">
+                                        <!-- 图片区域 -->
+                                        <div class="md:w-50 w-30 h-36 flex-shrink-0 mr-3">
+                                            <img class="object-cover w-full h-full rounded-md" :src="blog.imageUrl"
+                                                alt="文章封面" />
                                         </div>
-                                        <!-- 底部信息 -->
-                                        <div class="flex pt-1">
-                                            <n-tag :bordered="false">
-                                                {{ blog.create_time }}
-                                            </n-tag>
-                                            <div class="ml-3">
-                                                <n-tag :bordered="false">
-                                                    {{ blog.commentCount }}条评论
-                                                </n-tag>
+                                        <!-- 内容区域 -->
+                                        <div class="flex-1 flex flex-col z-20 justify-between">
+                                            <!-- 顶部内容 -->
+                                            <div>
+                                                <h1
+                                                    class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3 line-clamp-1">
+                                                    {{ blog.title }}
+                                                </h1>
+                                                <p class="text-gray-500 dark:text-gray-500 h-18 line-clamp-3">
+                                                    {{ blog.content }}
+                                                </p>
                                             </div>
+                                            <!-- 底部信息 -->
+                                            <div class="flex pt-1">
+                                                <n-tag :bordered="false">
+                                                    {{ blog.create_time }}
+                                                </n-tag>
+                                                <div class="ml-3">
+                                                    <n-tag :bordered="false">
+                                                        {{ blog.commentCount }}条评论
+                                                    </n-tag>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </n-card>
+                            </template>
+                            <!-- 分页组件 -->
+                            <div class="justify-center flex mt-10">
+                                <n-pagination @update:page="loadBlogs" v-model:page="pageInfo.page"
+                                    :page-count="pageInfo.pageCount" :theme-overrides="themeOverrides" />
+                            </div>
+                        </div>
+                        <!-- 右侧分类面板 -->
+                        <div class="w-full md:w-50 lg:w-70 xl:w-96">
+                            <n-card :content-style="{ padding: 0 }"
+                                style="background-color: color-mix(in oklab, var(--color-white) 60%, transparent); height: fit-content; border-radius: 0.5rem; max-width: 100% !important;">
+                                <div class="p-5">
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">搜索文章</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex flex-col mb-1 gap-2">
+                                            <div class="flex flex-row">
+                                                <n-input :bordered="false" :theme-overrides="themeOverrides"
+                                                    v-model:value="pageInfo.keyword" placeholder="输入关键词"
+                                                    @keyup.enter="loadBlogs(1)"></n-input>
+                                            </div>
+                                            <span
+                                                class="text-left text-gray-600 dark:text-gray-400 line-clamp-3">在这里检索所有文章</span>
                                         </div>
                                     </div>
                                 </div>
                             </n-card>
-                        </template>
-                        <!-- 分页组件 -->
-                        <div class="justify-center flex mt-10">
-                            <n-pagination @update:page="loadBlogs" v-model:page="pageInfo.page"
-                                :page-count="pageInfo.pageCount" :theme-overrides="themeOverrides" />
                         </div>
                     </div>
-                    <!-- 右侧分类面板 -->
-                    <div class="w-full md:w-50 lg:w-70 xl:w-96">
-                        <n-card :content-style="{ padding: 0 }"
-                            style="background-color: color-mix(in oklab, var(--color-white) 60%, transparent); height: fit-content; border-radius: 0.5rem; max-width: 100% !important;">
-                            <div class="p-5">
-                                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">搜索文章</h3>
-                                <div class="space-y-3">
-                                    <div class="flex flex-col mb-1 gap-2">
-                                        <div class="flex flex-row">
-                                            <n-input :bordered="false" :theme-overrides="themeOverrides"
-                                                v-model:value="pageInfo.keyword" placeholder="输入关键词"
-                                                @keyup.enter="loadBlogs(1)"></n-input>
-                                            <!-- <n-button :theme-overrides="themeOverrides" @click="pageInfo.page = 1; loadBlogs()"
-                            style="margin-left: 10px;">搜索</n-button> -->
-                                        </div>
-                                        <span
-                                            class="text-left text-gray-600 dark:text-gray-400 line-clamp-3">在这里检索所有文章</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </n-card>
-                    </div>
-                </div>
-            </n-layout>
-        </main>
-        <Footer></Footer>
+                </n-layout>
+            </main>
+            <Footer></Footer>
+        </template>
     </div>
 
 </template>
@@ -111,7 +133,7 @@
 //引入：
 import Header from "../components/Header.vue"
 import Footer from "../components/Footer.vue"
-import { NCard, NIcon, NLayout, NInput, NButton } from 'naive-ui'
+import { NCard, NIcon, NLayout, NInput, NButton, NSpin, NResult } from 'naive-ui'
 import { ChevronBack, ChevronForward } from '@vicons/ionicons5'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -124,7 +146,9 @@ import { useRouter } from 'vue-router'; // 添加路由hook
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
-
+//全局加载状态
+const isLoading = ref(true)
+const isError = ref(false) // 错误状态
 
 const selectedCategory = ref(0); // 初始值为 0
 // 使用 useStore 获取 Vuex Store
@@ -336,6 +360,9 @@ const loadBlogs = async (page = 0) => {
         blogListInfo.value = processedBlogs;
     } catch (error) {
         console.error("加载博客失败:", error);
+        isError.value = true;
+    } finally {
+        isLoading.value = false;
     }
 };
 
@@ -393,8 +420,9 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error('查询失败', error);
+        isError.value = true;
     } finally {
-        loading.value = false;
+        isLoading.value = false;
     }
 });
 /* console.log(blogListInfo) */
@@ -428,9 +456,208 @@ const fetchCommentsCount = async (blogs) => {
     }
 };
 
+// 重试加载
+const retryLoading = () => {
+    isError.value = false;
+    isLoading.value = true;
+    loadBlogs();
+};
 </script>
-
 <style>
+/* CSS */
+.fade {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+    /* 这里设置了0.5秒的过渡时间，以及ease-out的过渡速度曲线 */
+}
+
+.loading i {
+    /* 这里可以添加你的加载动画样式 */
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #6c757d;
+    margin: 4px;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: loading 1s infinite;
+}
+
+@keyframes loading {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}
+
+.loading {
+    width: 20px;
+    height: 20px;
+    transform: rotate(45deg);
+    animation: loading-ani1 4s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+}
+
+.loading i {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    border-radius: 0.3rem;
+    position: absolute;
+}
+
+.loading i:nth-child(1) {
+    background: #ef5350;
+    transform: translate(0, 0);
+    animation: loading-ani2 4s ease-in-out infinite;
+}
+
+.loading i:nth-child(2) {
+    background: #42a5f5;
+    transform: rotate(90deg) translate(0, 0);
+    animation: loading-ani3 6s ease-in-out infinite;
+}
+
+.loading i:nth-child(3) {
+    background: #ffca28;
+    transform: rotate(180deg) translate(0, 0);
+    animation: loading-ani4 8s ease-in-out infinite;
+}
+
+.loading i:nth-child(4) {
+    background: #5c6bc0;
+    transform: rotate(270deg) translate(0, 0);
+    animation: loading-ani5 10s ease-in-out infinite;
+}
+
+@keyframes loading-ani1 {
+    25% {
+        transform: rotate(135deg);
+    }
+
+    50% {
+        transform: rotate(225deg);
+    }
+
+    75% {
+        transform: rotate(315deg);
+    }
+
+    100% {
+        transform: rotate(405deg);
+    }
+}
+
+@keyframes loading-ani2 {
+
+    17.5%,
+    25%,
+    42.5%,
+    50%,
+    67.5%,
+    75%,
+    92.5%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+        transform: translate(0, 40px);
+    }
+}
+
+@keyframes loading-ani3 {
+
+    17.5%,
+    25%,
+    42.5%,
+    50%,
+    67.5%,
+    75%,
+    92.5%,
+    100% {
+        transform: rotate(90deg) translate(0, 0);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+        transform: rotate(90deg) translate(0, 40px);
+    }
+}
+
+@keyframes loading-ani4 {
+
+    17.5%,
+    25%,
+    42.5%,
+    50%,
+    67.5%,
+    75%,
+    92.5%,
+    100% {
+        transform: rotate(180deg) translate(0, 0);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+        transform: rotate(180deg) translate(0, 40px);
+    }
+}
+
+@keyframes loading-ani5 {
+
+    17.5%,
+    25%,
+    42.5%,
+    50%,
+    67.5%,
+    75%,
+    92.5%,
+    100% {
+        transform: rotate(270deg) translate(0, 0);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+        transform: rotate(270deg) translate(0, 40px);
+    }
+}
+
+/* 添加过渡效果到 #loadingScreen */
+#loadingScreen {
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+    /* 这里定义了1秒的缓入缓出过渡效果 */
+}
+
+/* 添加一个控制透明度变化的类 */
+#loadingScreen.fade {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    /* 过渡效果 */
+}
+
+/* 可选：当loadingScreen隐藏时确保它占用的空间被释放 */
+#loadingScreen.hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
 .custom-scroll::-webkit-scrollbar {
     height: 8px;
 }
@@ -463,10 +690,12 @@ const fetchCommentsCount = async (blogs) => {
 
 
 .n-input {
-    background-color: rgba(243, 243, 243, 0.473) !important;
+    background-color: rgba(3, 7, 18, 0.05) !important;
 }
 
-
+.n-tag {
+    background: rgba(3, 7, 18, 0.05) !important;
+}
 
 /* 深色模式下的样式 */
 @media (prefers-color-scheme: dark) {
