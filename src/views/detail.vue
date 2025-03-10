@@ -58,6 +58,9 @@
                             dark:prose-h1:text-gray-200
                             dark:prose-h2:text-gray-200
                             dark:prose-h3:text-gray-200
+                            dark:prose-h4:text-gray-200
+                            dark:prose-h5:text-gray-200
+                            dark:prose-h6:text-gray-200
                             dark:text-gray-200
                             dark:prose-code:text-gray-200
                             dark:prose-strong:text-gray-200" v-html="blogInfo.content"
