@@ -699,6 +699,15 @@ const retryLoading = () => {
 
 /* 深色模式下的样式 */
 @media (prefers-color-scheme: dark) {
+
+    .n-result .n-result-header .n-result-header__title {
+        color: rgb(195, 204, 211) !important;
+    }
+
+    .n-result {
+        color: rgb(145, 154, 161) !important;
+    }
+
     .n-card {
         background-color: color-mix(in oklab, var(--color-white) 0%, transparent) !important;
         border-color: rgba(255, 255, 255, 0.131) !important;

@@ -3,7 +3,7 @@
         <Header></Header>
         <main class="mb-auto flex justify-center"> <!-- 添加 flex 布局实现居中 -->
             <section
-                class=" mt-10 mx-4 border border-gray-200 dark:border-none rounded-2xl md:px-5 px-1 py-10 bg-white/80 dark:bg-gray-800/70">
+                class="mt-10 mx-4 xl:mx-60 lg:mx-40 md:mx-15 border border-gray-200 dark:border-none rounded-2xl md:px-5 px-1 py-10 bg-white/80 dark:bg-gray-800/70">
                 <div class="mx-auto">
                     <div class="lg:flex lg:items-center">
                         <div class="w-full">
@@ -13,7 +13,7 @@
                                     class="text-2xl mx-2 mt-10 font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
                                     {{ blogInfo.title }}
                                 </h1>
-                                <div class="mt-2  mx-2 flex">
+                                <div class="mt-2 mx-2 flex">
                                     <span class="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
                                     <span class="inline-block w-3 h-1 ml-1 bg-blue-500 rounded-full"></span>
                                     <span class="inline-block w-1 h-1 ml-1 bg-blue-500 rounded-full"></span>
@@ -39,22 +39,28 @@
                                     </p>
                                 </div> -->
                                 <div>
-                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-
-                                    </p>
+                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-300"></p>
                                 </div>
                             </div>
                             <div class="mt-5 border-b dark:border-gray-700 border-gray-200"></div>
-                            <div class=" mx-3 mt-10">
-                                <article class="prose-sm md:prose lg:prose-lg 
-                        
-                                dark:prose-h1:text-gray-200
-                                dark:prose-h2:text-gray-200
-                                dark:prose-h3:text-gray-200 
-                                dark:text-gray-200
-                                dark:prose-code:text-gray-200
-                                dark:prose-strong:text-gray-200
-                                    " v-html="blogInfo.content">
+                            <div class="mx-3 mt-10">
+                                <!-- 加载动画 -->
+                                <div v-if="loading" class="flex justify-center items-center">
+                                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                                </div>
+                                <!-- 加载失败提示 -->
+                                <div v-else-if="loadFailed" class="text-center text-red-500">
+                                    加载失败，请稍后重试。
+                                </div>
+                                <!-- 内容区域 -->
+                                <article v-else class="prose prose-sm md:prose
+                            dark:prose-h1:text-gray-200
+                            dark:prose-h2:text-gray-200
+                            dark:prose-h3:text-gray-200
+                            dark:text-gray-200
+                            dark:prose-code:text-gray-200
+                            dark:prose-strong:text-gray-200" v-html="blogInfo.content"
+                                    style="max-width: none; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; width: 100%;">
                                 </article>
                             </div>
                             <div class="mt-16 border-b dark:border-gray-700 border-gray-200"></div>
@@ -71,13 +77,10 @@
 </template>
 
 <script setup>
-import Header from "../components/Header.vue"
-import Footer from "../components/Footer.vue"
-import { NForm, } from 'naive-ui';
-import themeOverrides from '../themeOverrides'; //引入自定义主题
-import { ref, reactive, onMounted, inject } from "vue";
-import { AdminStore } from '../stores/AdminStore';
-import { useRouter, useRoute } from 'vue-router'; // 添加路由hook
+import Header from "../components/Header.vue";
+import Footer from "../components/Footer.vue";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 
 // 获取图片 URL
@@ -85,23 +88,23 @@ const getImageUrl = (name) => {
     return new URL(`../assets/img/${name}`, import.meta.url).href;
 };
 
-const route = useRoute()
-/* const axios = inject("axios") */
-const blogInfo = ref({})
+const route = useRoute();
+const blogInfo = ref({});
+const loading = ref(true); // 加载状态
+const loadFailed = ref(false); // 加载失败状态
 
 onMounted(() => {
-    loadBlog()
+    loadBlog();
     twikoo.init({
         envId: "https://discuss.jiuliu.top/",
         el: "#tcomment",
         region: "ap-shanghai",
-        path: new URLSearchParams(window.location.search).get('id') // 提取?id=后的参数值[3,5](@ref)
+        path: new URLSearchParams(window.location.search).get("id"), // 提取?id=后的参数值
     });
-})
-
+});
 
 const loadBlog = async () => {
-    const router = useRouter(); // 获取路由实例
+    const router = useRouter();
 
     try {
         let res = await axios.get("/blog/detail?id=" + route.query.id);
@@ -117,15 +120,14 @@ const loadBlog = async () => {
     } catch (error) {
         console.error("Failed to load blog:", error);
         blogInfo.value = { title: "加载失败", content: "未找到博客内容，请稍后重试" };
-        router.push("/"); // 跳转到主页
+        loadFailed.value = true; // 标记加载失败
+    } finally {
+        loading.value = false; // 无论成功或失败，结束加载状态
     }
 };
 </script>
-<style>
-.prose {
-    max-width: none !important;
-}
 
+<style>
 .prose h1,
 .prose h2,
 .prose h3,
@@ -140,5 +142,6 @@ const loadBlog = async () => {
     margin-right: 0 !important;
     float: none !important;
     display: inline-block !important;
+    max-width: none !important;
 }
 </style>

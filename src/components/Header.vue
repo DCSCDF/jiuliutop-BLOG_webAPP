@@ -87,6 +87,7 @@ const menus = reactive([
     { name: "友情链接", href: "/links" },
     { name: "登陆", href: "/adminlogin" },
     { name: "网盘", href: "https://pan.jiuliu.top/" },
+    { name: "开往", href: "https://www.travellings.cn/go.html" },
 ]);
 
 // 展开式菜单选项
