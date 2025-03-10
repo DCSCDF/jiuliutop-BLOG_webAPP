@@ -2,18 +2,7 @@
 
     <div class="flex flex-col min-h-screen">
         <!-- 加载动画 -->
-        <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
-            <!-- <n-spin size="large" :theme-overrides="themeOverrides" /> -->
-            <div id="loadingScreen"
-                class="fixed inset-0 flex items-center justify-center z-50 bg-gray-100 dark:bg-gray-800">
-                <div class="loading">
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                </div>
-            </div>
-        </div>
+        <LoadingSpinner v-if="isLoading" />
         <!-- 错误提示 -->
         <div v-else-if="isError" class="flex justify-center items-center min-h-screen">
             <n-result status="error" title="API加载失败" description="请稍后重试或联系管理员">
@@ -146,9 +135,15 @@ import { useRouter } from 'vue-router'; // 添加路由hook
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
+// 引入加载动画模块
+import LoadingSpinner from '../components/LoadingSpinner.vue';
 //全局加载状态
 const isLoading = ref(true)
 const isError = ref(false) // 错误状态
+// finally {
+//         isLoading.value = false;
+//     }
+
 
 const selectedCategory = ref(0); // 初始值为 0
 // 使用 useStore 获取 Vuex Store
@@ -321,6 +316,8 @@ const loadBlogs_card = async () => {
     } catch (error) {
         /* console.error("加载博客数据失败:", error); */
         // 可以在这里添加用户提示或其他错误处理逻辑
+    } finally {
+        isLoading.value = false;
     }
 };
 // loadBlogs 函数

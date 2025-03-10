@@ -1,5 +1,15 @@
 <template>
     <div class="flex flex-col min-h-screen">
+        <!-- 加载动画 -->
+        <LoadingSpinner v-if="isLoading" />
+        <!-- 错误提示 -->
+        <div v-else-if="isError" class="flex justify-center items-center min-h-screen">
+            <n-result status="error" title="API加载失败" description="请稍后重试或联系管理员">
+                <template #footer>
+                    <n-button type="primary" @click="retryLoading" :theme-overrides="themeOverrides">重试</n-button>
+                </template>
+            </n-result>
+        </div>
         <Header></Header>
         <main class="mb-auto">
             <div
@@ -41,6 +51,8 @@ import Footer from "../components/Footer.vue";
 
 //lu you
 import { useRouter, useRoute } from 'vue-router'
+// 引入加载动画模块
+import LoadingSpinner from '../components/LoadingSpinner.vue';
 
 
 
@@ -123,7 +135,9 @@ export default {
         }
     },
     setup() {
-
+        //全局加载状态
+        const isLoading = ref(true)
+        const isError = ref(false) // 错误状态
         const router = useRouter();
         const route = useRoute();
         // 将 onMounted 移到 setup 函数内部
@@ -172,6 +186,8 @@ export default {
             } catch (error) {
                 console.error("登录请求失败:", error.response ? error.response.data : error.message);
                 message.error("登录失败，请检查您的账号或密码");
+            } finally {
+                isLoading.value = false;
             }
         };
 

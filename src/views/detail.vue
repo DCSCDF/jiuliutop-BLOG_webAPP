@@ -39,7 +39,8 @@
                                     </p>
                                 </div> -->
                                 <div>
-                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-300"></p>
+                                    <p class="mt-2 mx-2 text-sm text-gray-500 dark:text-gray-300">
+                                        发布日期: {{ blogInfo.create_time }}</p>
                                 </div>
                             </div>
                             <div class="mt-5 border-b dark:border-gray-700 border-gray-200"></div>
@@ -111,7 +112,15 @@ const loadBlog = async () => {
         /* console.log("API Response:", res.data); */
 
         if (res.data && res.data.data) {
-            blogInfo.value = res.data.data;
+            // 解析时间戳
+            const createTime = new Date(res.data.data.create_time);
+            const formattedTime = createTime.toLocaleString(); // 可以根据需要调整时间格式
+
+            // 将解析后的时间添加到 blogInfo 对象中
+            blogInfo.value = {
+                ...res.data.data,
+                create_time: formattedTime
+            };
         } else {
             console.error("No blog data found in response:", res.data);
             blogInfo.value = { title: "未找到博客内容", content: "请检查博客 ID 是否正确" };

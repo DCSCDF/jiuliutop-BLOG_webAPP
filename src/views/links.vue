@@ -1,5 +1,16 @@
 <template>
     <div class="flex flex-col min-h-screen">
+        <!-- 加载动画 -->
+        <LoadingSpinner v-if="isLoading" />
+        <!-- 错误提示 -->
+        <div v-else-if="isError" class="flex justify-center items-center min-h-screen">
+            <n-result status="error" title="API加载失败" description="请稍后重试或联系管理员">
+                <template #footer>
+                    <n-button type="primary" @click="retryLoading" :theme-overrides="themeOverrides">重试</n-button>
+                </template>
+            </n-result>
+        </div>
+        <!-- 正常内容 -->
         <Header></Header>
         <main class="mb-auto">
             <section class="">
@@ -67,6 +78,16 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+// 引入加载动画模块
+import LoadingSpinner from '../components/LoadingSpinner.vue';
+//全局加载状态
+const isLoading = ref(true)
+const isError = ref(false) // 错误状态
+// finally {
+//         isLoading.value = false;
+//     }
+
+
 
 // 定义响应式数据
 const settingsData = ref(null);
@@ -85,6 +106,8 @@ const fetchSettings = async () => {
         }
     } catch (error) {
         console.error('查询失败', error);
+    } finally {
+        isLoading.value = false;
     }
 };
 
@@ -99,6 +122,8 @@ const fetchLinks = async () => {
         }
     } catch (error) {
         console.error('获取链接列表失败', error);
+    } finally {
+        isLoading.value = false;
     }
 };
 
