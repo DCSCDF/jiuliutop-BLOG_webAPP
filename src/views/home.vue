@@ -31,13 +31,20 @@
                                 </div>
                             </div>
                         </div>
+
                         <!-- 暂时隐藏模型 需要显示可以在class里面加上lg:block -->
                         <div class="hidden items-center justify-center mt-6 lg:mt-0 w-auto max-w-xl lg:w-1/2">
                             <div ref="modelContainer" class="w-full h-96"></div>
                         </div>
                     </div>
                 </div>
+                <!-- 热力图 启用去掉注释就行 -->
+                <!-- <Heatmap></Heatmap> -->
                 <n-layout class=" py-4 px-2 md:px-10" style="background-color: rgba(0,0,0,0);">
+                    <!-- <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
+                        <h1 class=" text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4">我的文章:</h1>
+                    </div> -->
+
                     <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
                         <!-- 左侧主内容区 -->
                         <div class="flex-1 space-y-6">
@@ -48,7 +55,7 @@
                             </div>
                             <!-- 如果文章数量不为空，显示文章列表 -->
                             <template v-else>
-                                <n-card c v-for="(blog, index) in blogListInfo" :key="index"
+                                <n-card v-for="(blog, index) in blogListInfo" :key="index"
                                     :content-style="{ padding: 0 }" @click="toDetail(blog)">
                                     <div class="p-5 flex flex-row">
                                         <!-- 图片区域 -->
@@ -108,6 +115,7 @@
                                     </div>
                                 </div>
                             </n-card>
+
                         </div>
                     </div>
                 </n-layout>
@@ -122,6 +130,7 @@
 //引入：
 import Header from "../components/Header.vue"
 import Footer from "../components/Footer.vue"
+import Heatmap from "../components/Heatmap.vue"
 import { NCard, NIcon, NLayout, NInput, NButton, NSpin, NResult } from 'naive-ui'
 import { ChevronBack, ChevronForward } from '@vicons/ionicons5'
 import * as THREE from 'three';

@@ -1,0 +1,18 @@
+<template>
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
+        <div class="flex-1 space-y-6">
+            <n-card :content-style="{ padding: 0 }">
+                <div class="m-5">
+                    <img src="https://ghchart.rshah.org/DCSCDF" alt="2016rshah's Github chart" />
+                </div>
+            </n-card>
+        </div>
+        <div class="w-full md:w-50 lg:w-70 xl:w-96"></div>
+    </div>
+</template>
+
+<script setup>
+
+
+
+</script>

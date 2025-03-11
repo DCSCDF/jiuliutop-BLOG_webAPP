@@ -9,6 +9,9 @@ import themeOverrides from './themeOverrides'; // 引入自定义主题
 import { AdminStore } from './stores/AdminStore';
 import store from './stores/VuexStore'; // 确保导入 store
 import "./assets/css/text.css";
+import * as echarts from 'echarts'
+//vue3.0取消了Vue.prototype，官方文档推荐使用globalProperties
+
 
 const { message, notification, dialog } = createDiscreteApi(["message", "notification", "dialog"]);
 // 添加请求拦截器
@@ -31,7 +34,7 @@ const projectStatus = {
     repository: "https://github.com/DCSCDF/jiuliutop-BLOG_webAPP"
 };
 console.table(projectStatus);
-
+app.config.globalProperties.$echarts = echarts
 app.provide("message", message);
 app.provide("notification", notification);
 app.provide("dialog", dialog);
