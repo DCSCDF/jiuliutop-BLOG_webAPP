@@ -18,6 +18,9 @@
                     <h1>JIULIUTOP-管理员登陆</h1>
                 </div>
                 <div class='mt-6' title="管理员后台登陆">
+                    <div v-if="cooldown" class="text-red-500 text-sm mb-2">
+                        账户已锁定，请{{ remainingMinutes }}分钟后再试
+                    </div>
                     <n-form ref="formRef" :rules="rules" :model="admin">
                         <n-form-item path="account" label="账号">
                             <n-input :bordered="false" v-model:value="admin.account" placeholder="请输入账号"
@@ -30,178 +33,165 @@
                     </n-form>
                     <n-checkbox class="my-4" v-model:checked="admin.rember" label="记住账号密码"
                         :theme-overrides="themeOverrides" />
-                    <n-button @click="login" color="#4c5564" type="primary" size="medium">
-                        登陆
+                    <n-button @click="login" :disabled="cooldown || loginBtnDisabled" :loading="loginBtnDisabled"
+                        :theme-overrides="themeOverrides">
+                        {{ cooldown ? `锁定中（剩余${remainingMinutes}分钟）` : "登录" }}
                     </n-button>
+                    <!-- 剩余尝试提示 -->
+                    <div v-if="remainingAttempts < 5 && !cooldown" class="text-yellow-500 text-sm mt-2">
+                        剩余尝试次数：{{ remainingAttempts }}
+                    </div>
                 </div>
             </div>
         </main>
         <Footer></Footer>
     </div>
 </template>
-<script>
-import { ref, reactive, onMounted, inject } from "vue";
-import { NButton, NForm, NFormItem, NInput, NCheckbox } from 'naive-ui';
+
+<script setup>
+import { ref, reactive, onBeforeUnmount } from "vue";
+import { useRouter } from 'vue-router';
+import { NButton, NForm, NFormItem, NInput, NCheckbox, useMessage } from 'naive-ui';
 import axios from 'axios';
-import themeOverrides from '../themeOverrides'; //引入自定义主题
+import themeOverrides from '../themeOverrides';
 import { AdminStore } from '../stores/AdminStore';
-import { createDiscreteApi } from "naive-ui";
 import Header from '../components/Header.vue';
 import Footer from "../components/Footer.vue";
-
-//lu you
-import { useRouter, useRoute } from 'vue-router'
-// 引入加载动画模块
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 
-
-
+const router = useRouter();
 const adminStore = AdminStore();
+const message = useMessage();
 
-const rules = {
-    account: [
-        {
-            required: true,
-            message: "请输入账号",
-            trigger: "blur"
-        },
-        {
-            min: 3,
-            max: 12,
-            message: "账号长度在3到12个字符",
-            trigger: "blur"
-        }
-    ],
-    password: [
-        {
-            required: true,
-            message: "请输入密码",
-            trigger: "blur"
-        },
-        {
-            min: 6,
-            max: 18,
-            message: "密码长度在6到18个字符",
-            trigger: "blur"
-        }
-    ]
-};
+// 防抖相关状态
+const cooldown = ref(false);
+const remainingAttempts = ref(5);
+const remainingMinutes = ref(30);
+const loginBtnDisabled = ref(false);
+const isLoading = ref(false);
+const isError = ref(false);
+let lockTimer = null;
 
+// 登录表单
+const formRef = ref(null);
 const admin = reactive({
     account: localStorage.getItem("account") || "",
     password: localStorage.getItem("password") || "",
     rember: localStorage.getItem("rember") === "1" || false
 });
 
-const formRef = ref(null);
-let { message } = createDiscreteApi(["message"]);
-
-
-export default {
-    components: {
-        //在这里引入组件
-        NButton,
-        NForm,
-        NFormItem,
-        NInput,
-        NCheckbox,
-        Header,
-        Footer
-    },
-    mounted() {
-        this.verifyToken();
-    },
-    methods: {
-        async verifyToken() {
-            const token = localStorage.getItem('admin_token');
-            if (token) {
-                try {
-                    const response = await axios.get('/admin/profile', {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    if (response.status === 200) {
-                        this.$router.push('/dashboard/');
-                        message.info("已经登陆过了");
-                    }
-                } catch (error) {
-                    localStorage.removeItem('token');
-                    this.$router.push('/adminlogin');
-                }
-            } else {
-                // 没有token，可能需要重新登录或跳转到登录页面
-                this.$router.push('/adminlogin');
-                message.error("未登录！");
-            }
-        }
-    },
-    setup() {
-        //全局加载状态
-        const isLoading = ref(true)
-        const isError = ref(false) // 错误状态
-        const router = useRouter();
-        const route = useRoute();
-        // 将 onMounted 移到 setup 函数内部
-        onMounted(() => {
-            // 这里可以进行一些初始化操作
-            console.log("组件已挂载");
-        });
-
-        const login = async () => {
-            const isValid = await formRef.value.validate();
-            if (!isValid) {
-                // 验证失败，显示错误提示
-                message.error({ content: "验证未通过，请检查输入", duration: 5000 });
-                return;
-            }
-
-            try {
-                let result = await axios.post("/admin/login", {
-                    account: admin.account,
-                    password: admin.password
-                });
-
-                if (result.data.code === 200) {
-                    // 登录成功
-                    adminStore.token = result.data.data.token;
-                    adminStore.account = result.data.data.account;
-                    adminStore.id = result.data.data.id;
-                    localStorage.setItem('admin_token', result.data.data.token);
-                    console.log("登录成功:", result.data.code);
-                    message.success("登录成功");
-
-                    // 记住我功能
-                    if (admin.rember) {
-                        localStorage.setItem("account", admin.account);
-                        localStorage.setItem("password", admin.password);
-                        localStorage.setItem("rember", admin.rember ? "1" : "0");
-                    }
-
-                    router.push("/dashboard")
-                } else {
-                    // 登录失败
-                    console.log("登录失败:", result.data.data.message);
-                    message.error({ content: result.data.data.message || "登录失败，请重试", duration: 5000 });
-                }
-
-            } catch (error) {
-                console.error("登录请求失败:", error.response ? error.response.data : error.message);
-                message.error("登录失败，请检查您的账号或密码");
-            } finally {
-                isLoading.value = false;
-            }
-        };
-
-        return {
-            rules,
-            admin,
-            login,
-            formRef,
-            themeOverrides
-        };
-    }
+// 表单验证规则
+const rules = {
+    account: [
+        { required: true, message: "请输入账号", trigger: "blur" },
+        { min: 3, max: 12, message: "账号长度在3到12个字符", trigger: "blur" }
+    ],
+    password: [
+        { required: true, message: "请输入密码", trigger: "blur" },
+        { min: 6, max: 18, message: "密码长度在6到18个字符", trigger: "blur" }
+    ]
 };
 
+// 冷却倒计时逻辑
+const startCooldownTimer = () => {
+    let seconds = 1800;
+    lockTimer = setInterval(() => {
+        remainingMinutes.value = Math.ceil(seconds / 60);
+        seconds--;
+        if (seconds < 0) {
+            clearInterval(lockTimer);
+            cooldown.value = false;
+            remainingAttempts.value = 5;
+        }
+    }, 1000);
+};
+
+
+// 登录处理
+const login = async () => {
+    if (cooldown.value) return;
+
+    loginBtnDisabled.value = true;
+    try {
+        const result = await axios.post("/admin/login", {
+            account: admin.account,
+            password: admin.password
+        }, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        // console.log(result);
+        // console.log("Request Body:", {
+        //     account: admin.account,
+        //     password: admin.password
+        // });
+        if (result.data.code === 200) {
+            // 登录成功处理
+            const adminInfo = result.data.data;
+            adminStore.token = adminInfo.token;
+            localStorage.setItem('admin_token', adminInfo.token);
+
+            if (admin.rember) {
+                localStorage.setItem("account", admin.account);
+                localStorage.setItem("password", admin.password);
+                localStorage.setItem("rember", admin.rember ? "1" : "0");
+            }
+
+            // 跳转到仪表盘
+            await router.push("/dashboard");
+        } else {
+            // 登录失败处理
+            throw new Error(result.data.msg || "登录失败");
+        }
+    } catch (error) {
+        // console.error("登录失败:", error);
+        if (error.response) {
+            // 服务器返回的错误
+            const res = error.response.data || {};
+            if (res.code === 429) {
+                // 冷却状态处理
+                cooldown.value = true;
+                startCooldownTimer();
+            } else if (res.code === 500) {
+                // 普通失败处理
+                remainingAttempts.value -= 1;
+                if (remainingAttempts.value <= 0) {
+                    cooldown.value = true;
+                    startCooldownTimer();
+                }
+            }
+            // 显示API返回的错误信息
+            message.error(res.msg || "登录失败，请检查账号或密码");
+        } else if (error.request) {
+            // 请求未发送到服务器
+            message.error("无法连接到服务器，请检查网络连接");
+        } else {
+            // 其他错误
+            message.error(error.message || "登录失败，请检查账号或密码");
+        }
+    } finally {
+        loginBtnDisabled.value = false;
+    }
+};
+// 组件卸载时清理定时器
+onBeforeUnmount(() => {
+    if (lockTimer) clearInterval(lockTimer);
+});
+
+// 暴露模板需要的响应式状态
+defineExpose({
+    cooldown,
+    remainingAttempts,
+    remainingMinutes,
+    loginBtnDisabled,
+    admin,
+    formRef,
+    themeOverrides,
+    login
+});
 </script>
+
 
 <style scoped>
 .n-button {
@@ -209,6 +199,18 @@ export default {
 }
 
 @media (prefers-color-scheme: dark) {
+
+    :deep(.n-input .n-input__input-el,
+        .n-input .n-input__textarea-el) {
+        color: var(--color-white) !important;
+    }
+
+    .n-button {
+        width: 100%;
+        border-color: rgba(255, 255, 255, 0.131) !important;
+        color: var(--color-white);
+    }
+
     .n-card {
         background-color: color-mix(in oklab, var(--color-white) 0%, transparent) !important;
         border-color: rgba(255, 255, 255, 0.131) !important;
@@ -217,6 +219,7 @@ export default {
         max-width: 100% !important;
         border-radius: 0.5rem !important;
         cursor: pointer !important;
+
     }
 
     .n-tag {

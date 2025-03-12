@@ -33,7 +33,8 @@ let routes = [
             },
             {
                 path: "/dashboard/article",
-                component: () => import("../views/dashboard/Article.vue")
+                component: () => import("../views/dashboard/Article.vue"),
+                // meta: { requiresAuth: true } // 如果需要权限验证
             },
             {
                 path: "/dashboard/link",

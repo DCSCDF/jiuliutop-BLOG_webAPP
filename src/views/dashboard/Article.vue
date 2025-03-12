@@ -163,7 +163,7 @@ const showDeleteModal = ref(false);
 const currentDeleteBlog = ref(null);
 const tabValue = ref("add")
 
-const message = useMessage() // 在setup顶部声明
+const message = useMessage()
 const handleExceed = () => {
     message.error("只能上传一张图片！");
 };
@@ -234,7 +234,7 @@ const loadCategorys = async () => {
 const showConfirm = ref(false)
 const handleUploadFinish = (options) => {
     try {
-        console.log('完整上传事件参数:', options); // 调试关键
+        // console.log('完整上传事件参数:', options); // 调试关键
 
         // 1. 从事件参数中直接提取响应数据
         const { file, event } = options; // 解构参数
@@ -383,14 +383,6 @@ watch(tabValue, (newVal) => {
         }
     }
 });
-
-/* const toUpdate = async (blog) => {
-  // ...其他代码
-  tabValue.value = "update";
-  await nextTick();
-
-  }
-} */
 
 // 修改获取文章详情的函数
 const toUpdate = async (blog) => {
