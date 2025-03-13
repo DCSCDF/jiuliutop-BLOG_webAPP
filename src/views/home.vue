@@ -30,7 +30,9 @@
                                     <!-- <n-button color="#6b7281" style="width: 100px;">关于我</n-button> -->
                                 </div>
                             </div>
+                            <!-- <Technologystack></Technologystack> -->
                         </div>
+
 
                         <!-- 暂时隐藏模型 需要显示可以在class里面加上lg:block -->
                         <div class="hidden items-center justify-center mt-6 lg:mt-0 w-auto max-w-xl lg:w-1/2">
@@ -38,15 +40,15 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- 热力图 启用去掉注释就行 -->
                 <!-- <Heatmap></Heatmap> -->
                 <n-layout class=" py-4 px-2 md:px-10" style="background-color: rgba(0,0,0,0);">
                     <!-- <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
                         <h1 class=" text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4">我的文章:</h1>
                     </div> -->
-
-                    <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
-                        <!-- 左侧主内容区 -->
+                    <div class="container max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
+                        <!-- 主内容区 -->
                         <div class="flex-1 space-y-6">
                             <!-- 如果文章数量为空，显示红色报错信息 -->
                             <div v-if="blogListInfo.length === 0"
@@ -96,31 +98,40 @@
                                     :page-count="pageInfo.pageCount" :theme-overrides="themeOverrides" />
                             </div>
                         </div>
-                        <!-- 右侧分类面板 -->
-                        <div class="w-full md:w-50 lg:w-70 xl:w-96">
-                            <div>
-                                <About></About>
-                                <n-card :content-style="{ padding: 0 }"
-                                    style="background-color: color-mix(in oklab, var(--color-white) 60%, transparent); height: fit-content; border-radius: 0.5rem; max-width: 100% !important;">
-                                    <div class="p-5">
-                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">搜索文章
-                                        </h3>
-                                        <div class="space-y-3">
-                                            <div class="flex flex-col mb-1 gap-2">
-                                                <div class="flex flex-row">
-                                                    <n-input :bordered="false" :theme-overrides="themeOverrides"
-                                                        v-model:value="pageInfo.keyword" placeholder="输入关键词"
-                                                        @keyup.enter="loadBlogs(1)"></n-input>
+
+                        <!-- 右侧面板 -->
+                        <div class="w-full md:w-70">
+                            <n-affix :trigger-top="affixTriggerTop" :style="{ top: `${headerOffset}px` }"
+                                @change="handleAffixChange">
+                                <div ref="rightPanel" class="max-h-[calc(100vh-140px)]" :style="affixStyle">
+                                    <About></About>
+                                    <n-card :content-style="{ padding: 0 }" style="background-color: color-mix(in oklab, var(--color-white) 60%, transparent); 
+                                        border-radius: 0.5rem;">
+                                        <div class="p-5">
+                                            <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">搜索文章
+                                            </h3>
+                                            <div class="space-y-3">
+                                                <div class="flex flex-col mb-1 gap-2">
+                                                    <div class="flex flex-row">
+                                                        <n-input :bordered="false" :theme-overrides="themeOverrides"
+                                                            v-model:value="pageInfo.keyword" placeholder="输入关键词"
+                                                            @keyup.enter="loadBlogs(1)">
+                                                        </n-input>
+                                                    </div>
+                                                    <span
+                                                        class="text-left text-gray-600 dark:text-gray-400 line-clamp-3">
+                                                        在这里检索所有文章
+                                                    </span>
                                                 </div>
-                                                <span
-                                                    class="text-left text-gray-600 dark:text-gray-400 line-clamp-3">在这里检索所有文章</span>
                                             </div>
                                         </div>
-                                    </div>
-                                </n-card>
-                            </div>
+                                    </n-card>
+                                </div>
+                            </n-affix>
                         </div>
                     </div>
+
+
                 </n-layout>
             </main>
             <Footer></Footer>
@@ -131,6 +142,7 @@
 
 <script setup>
 //引入：
+import Technologystack from "../components/Technologystack.vue"
 import About from "../components/AboutMe.vue"
 import Header from "../components/Header.vue"
 import Footer from "../components/Footer.vue"
@@ -153,8 +165,42 @@ const isError = ref(false) // 错误状态
 //         isLoading.value = false;
 //     }
 
+// header响应逻辑
+const headerOffset = ref(70) // 默认初始值
+const affixTriggerTop = ref(70)
 
-const selectedCategory = ref(0); // 初始值为 0
+const rightPanel = ref(null)
+const affixStyle = ref({})
+const originalWidth = ref(0)
+
+// 处理affix状态变化
+const handleAffixChange = (isFixed) => {
+    if (isFixed) {
+        // 记录原始宽度并设置固定宽度
+        originalWidth.value = rightPanel.value?.offsetWidth || 0
+        affixStyle.value = {
+            width: `${originalWidth.value}px`,
+            transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        }
+    } else {
+        // 恢复自适应宽度
+        affixStyle.value = { width: '100%' }
+    }
+}
+
+// 添加窗口resize监听器
+onMounted(() => {
+    window.addEventListener('resize', () => {
+        if (originalWidth.value > 0) {
+            affixStyle.value.width = `${originalWidth.value}px`
+        }
+    })
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', () => { })
+})
+
 // 使用 useStore 获取 Vuex Store
 const store = useStore();
 
@@ -471,6 +517,40 @@ const retryLoading = () => {
 </script>
 <style>
 /* CSS */
+/* 添加过渡效果 */
+.n-affix {
+    @media (width >=48rem
+
+        /* 768px */
+    ) {
+        width: calc(var(--spacing) * 70) !important
+            /* 17.5rem = 280px */
+        ;
+    }
+}
+
+.right-panel {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 保持内容宽度一致 */
+.affix-content {
+    width: inherit !important;
+}
+
+/* 主页面添加过渡 */
+
+.n-affix {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Header动画优化 */
+header {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.2s ease-in-out;
+    will-change: transform, height;
+}
+
 .fade {
     opacity: 0;
     transition: opacity 0.5s ease-out;

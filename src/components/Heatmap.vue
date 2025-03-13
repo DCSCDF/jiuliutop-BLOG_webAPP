@@ -1,10 +1,11 @@
 <template>
+    <!-- 热力图 -->
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
         <div class="flex-1 space-y-6">
             <n-card :content-style="{ padding: 0 }">
                 <div class="m-5">
                     <!-- {{ url }} -->
-                    <img :src="url" alt="2016rshah's Github chart" />
+                    <img :src="url" alt="jiuliu's Github chart" />
                 </div>
             </n-card>
         </div>

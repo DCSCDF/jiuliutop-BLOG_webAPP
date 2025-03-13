@@ -33,6 +33,7 @@ const projectStatus = {
     author: "JiuLiuTOP",
     repository: "https://github.com/DCSCDF/jiuliutop-BLOG_webAPP"
 };
+
 console.table(projectStatus);
 app.config.globalProperties.$echarts = echarts
 app.provide("message", message);
