@@ -101,7 +101,8 @@
 
                         <!-- 右侧面板 -->
                         <div class="w-full md:w-70">
-                            <n-affix :trigger-top="affixTriggerTop" :style="{ top: `${headerOffset}px` }"
+                            <n-affix :trigger-top="isMobile ? Infinity : affixTriggerTop"
+                                :style="isMobile ? { position: 'static' } : { top: `${headerOffset}px` }"
                                 @change="handleAffixChange">
                                 <div ref="rightPanel" class="max-h-[calc(100vh-140px)]" :style="affixStyle">
                                     <About></About>
@@ -168,26 +169,42 @@ const isError = ref(false) // 错误状态
 // header响应逻辑
 const headerOffset = ref(70) // 默认初始值
 const affixTriggerTop = ref(70)
+// 响应式移动端判断
+const isMobile = ref(false)
+const checkMobile = () => {
+    isMobile.value = window.innerWidth < 768 // Tailwind的md断点
+}
 
+// 生命周期管理
+onMounted(() => {
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', checkMobile)
+})
 const rightPanel = ref(null)
 const affixStyle = ref({})
 const originalWidth = ref(0)
 
 // 处理affix状态变化
+
 const handleAffixChange = (isFixed) => {
+    // 移动端直接禁止固定
+    if (isMobile.value) return false
+
+    // 原有PC端逻辑
     if (isFixed) {
-        // 记录原始宽度并设置固定宽度
         originalWidth.value = rightPanel.value?.offsetWidth || 0
         affixStyle.value = {
             width: `${originalWidth.value}px`,
             transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }
     } else {
-        // 恢复自适应宽度
         affixStyle.value = { width: '100%' }
     }
 }
-
 // 添加窗口resize监听器
 onMounted(() => {
     window.addEventListener('resize', () => {
@@ -517,6 +534,13 @@ const retryLoading = () => {
 </script>
 <style>
 /* CSS */
+@media (max-width: 768px) {
+    .n-affix--fixed {
+        position: static !important;
+        transform: none !important;
+    }
+}
+
 /* 添加过渡效果 */
 .n-affix {
     @media (width >=48rem
@@ -816,6 +840,17 @@ header {
 </style>
 
 <style scoped>
+@media (max-width: 768px) {
+    .n-affix {
+        position: static !important;
+        transform: none !important;
+    }
+
+    .isFixed {
+        position: static !important;
+    }
+}
+
 /* 卡片局部样式 */
 .n-card {
     min-width: 200px;
