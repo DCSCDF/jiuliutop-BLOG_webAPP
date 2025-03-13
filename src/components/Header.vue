@@ -64,17 +64,12 @@
 </template>
 
 <script setup>
+
 import { reactive, ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import themeOverrides from '../themeOverrides'; // 引入自定义主题
 import axios from 'axios';
 import { useStore } from 'vuex'; // 引入 Vuex
 import { useRoute } from 'vue-router';
-
-
-
-//header状态管理
-const isHeaderExpanded = ref(true)
-const headerHeight = ref(0)
 
 const settingsData = ref(null);
 const loading = ref(true);
@@ -119,33 +114,24 @@ const isHomePage = computed(() => {
 });
 
 // 处理滚动事件
-
 const handleScroll = () => {
     if (!header.value) return;
 
-    const currentScroll = window.scrollY;
-    const headerRect = header.value.getBoundingClientRect();
+    const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+    if (currentScrollPosition < 0) return;
 
-    // 动态计算header实际高度
-    headerHeight.value = headerRect.height;
-
-    if (currentScroll > 200) {
-        isHeaderExpanded.value = currentScroll < lastScrollPosition.value;
-        header.value.style.transform = isHeaderExpanded.value
-            ? "translateY(0)"
-            : `translateY(-${headerHeight.value}px)`;
+    if (currentScrollPosition > 200) {
+        if (currentScrollPosition > lastScrollPosition.value) {
+            header.value.style.transform = "translateY(-100%)";
+        } else {
+            header.value.style.transform = "translateY(0)";
+        }
+    } else {
+        header.value.style.transform = "translateY(0)";
     }
 
-    lastScrollPosition.value = currentScroll;
-    // console.log(isHeaderExpanded)
-    // console.log(headerHeight)
+    lastScrollPosition.value = currentScrollPosition;
 };
-
-// 暴露header状态给父组件
-defineExpose({
-    isHeaderExpanded,
-    headerHeight
-});
 
 // 移除滚动事件监听
 onBeforeUnmount(() => {
