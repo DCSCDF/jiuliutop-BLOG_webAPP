@@ -115,7 +115,6 @@
 <script setup>
 
 import RichTextEditor from '../../components/RichTextEditor.vue';
-import { NForm, NButton, NFormItem, NInput, NSelect, useMessage, NCard, NSpace, NUpload } from 'naive-ui';
 import themeOverrides from '../../themeOverrides';
 import { ref, reactive, onMounted, inject, nextTick, shallowRef, watch } from "vue";
 import { AdminStore } from '../../stores/AdminStore';

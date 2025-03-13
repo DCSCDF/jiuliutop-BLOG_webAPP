@@ -1,6 +1,6 @@
 <template>
     <header ref="header"
-        class="sticky top-0 z-30 w-full backdrop-blur-xl flex-none transition-transform duration-500 border-b border-slate-900/10 dark:border-slate-50/[0.06] bg-white/60 dark:bg-gray-900/75">
+        class="sticky top-0 z-30 w-full backdrop-blur-xl flex-none transition-transform duration-500 border-b border-slate-900/10 dark:border-slate-50/[0.06] bg-white/60 dark:bg-gray-900/60">
         <div id="errorPopupContainer"></div>
         <div class="lg:w-6xl container px-6 py-2 mx-auto">
             <div class="flex items-center justify-between">
@@ -64,7 +64,6 @@
 </template>
 
 <script setup>
-import { NButton, useLoadingBar, NPopselect, NDropdown } from 'naive-ui';
 import { reactive, ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import themeOverrides from '../themeOverrides'; // 引入自定义主题
 import axios from 'axios';

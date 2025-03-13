@@ -159,7 +159,7 @@ const formatDate = (timestamp) => {
     // 返回格式为 "YYYY-M-D"
     return `${year}-${month}-${day}`;
 };
-// 页面加载时调用 API
+// 页面加载时调用
 onMounted(async () => {
     await fetchSettings();
     await fetchLinks();

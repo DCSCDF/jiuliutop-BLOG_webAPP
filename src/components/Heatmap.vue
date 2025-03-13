@@ -3,7 +3,8 @@
         <div class="flex-1 space-y-6">
             <n-card :content-style="{ padding: 0 }">
                 <div class="m-5">
-                    <img src="https://ghchart.rshah.org/DCSCDF" alt="2016rshah's Github chart" />
+                    <!-- {{ url }} -->
+                    <img :src="url" alt="2016rshah's Github chart" />
                 </div>
             </n-card>
         </div>
@@ -12,7 +13,12 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
+const url = "https://ghchart.rshah.org/DCSCDF";
 
-
+// 生命周期钩子
+onMounted(() => {
+    url();
+});
 
 </script>

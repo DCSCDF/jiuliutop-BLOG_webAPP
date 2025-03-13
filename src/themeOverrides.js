@@ -1,10 +1,10 @@
 // themeOverrides.js
 export default {
     common: {
-        primaryColor: '#93a1b7', // 灰色
-        primaryColorHover: '#93a1b7',
-        primaryColorPressed: '#93a1b7',
-        primaryColorSuppl: '#93a1b7',
+        primaryColor: '#4b5563', // 灰色
+        primaryColorHover: '#4b5563',
+        primaryColorPressed: '#4b5563',
+        primaryColorSuppl: '#4b5563',
         /*  optionTextColor: '#93a1b7', */
     },
 

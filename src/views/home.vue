@@ -71,7 +71,7 @@
                                                     class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3 line-clamp-1">
                                                     {{ blog.title }}
                                                 </h1>
-                                                <p class="text-gray-500 dark:text-gray-500 h-18 line-clamp-3">
+                                                <p class="text-gray-500 dark:text-gray-500 line-clamp-3">
                                                     {{ blog.content }}
                                                 </p>
                                             </div>
@@ -98,24 +98,27 @@
                         </div>
                         <!-- 右侧分类面板 -->
                         <div class="w-full md:w-50 lg:w-70 xl:w-96">
-                            <n-card :content-style="{ padding: 0 }"
-                                style="background-color: color-mix(in oklab, var(--color-white) 60%, transparent); height: fit-content; border-radius: 0.5rem; max-width: 100% !important;">
-                                <div class="p-5">
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">搜索文章</h3>
-                                    <div class="space-y-3">
-                                        <div class="flex flex-col mb-1 gap-2">
-                                            <div class="flex flex-row">
-                                                <n-input :bordered="false" :theme-overrides="themeOverrides"
-                                                    v-model:value="pageInfo.keyword" placeholder="输入关键词"
-                                                    @keyup.enter="loadBlogs(1)"></n-input>
+                            <div>
+                                <About></About>
+                                <n-card :content-style="{ padding: 0 }"
+                                    style="background-color: color-mix(in oklab, var(--color-white) 60%, transparent); height: fit-content; border-radius: 0.5rem; max-width: 100% !important;">
+                                    <div class="p-5">
+                                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">搜索文章
+                                        </h3>
+                                        <div class="space-y-3">
+                                            <div class="flex flex-col mb-1 gap-2">
+                                                <div class="flex flex-row">
+                                                    <n-input :bordered="false" :theme-overrides="themeOverrides"
+                                                        v-model:value="pageInfo.keyword" placeholder="输入关键词"
+                                                        @keyup.enter="loadBlogs(1)"></n-input>
+                                                </div>
+                                                <span
+                                                    class="text-left text-gray-600 dark:text-gray-400 line-clamp-3">在这里检索所有文章</span>
                                             </div>
-                                            <span
-                                                class="text-left text-gray-600 dark:text-gray-400 line-clamp-3">在这里检索所有文章</span>
                                         </div>
                                     </div>
-                                </div>
-                            </n-card>
-
+                                </n-card>
+                            </div>
                         </div>
                     </div>
                 </n-layout>
@@ -128,20 +131,17 @@
 
 <script setup>
 //引入：
+import About from "../components/AboutMe.vue"
 import Header from "../components/Header.vue"
 import Footer from "../components/Footer.vue"
 import Heatmap from "../components/Heatmap.vue"
-import { NCard, NIcon, NLayout, NInput, NButton, NSpin, NResult } from 'naive-ui'
-import { ChevronBack, ChevronForward } from '@vicons/ionicons5'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { ref, onMounted, onUnmounted, reactive, watch } from 'vue'
+import { ref, onMounted, onUnmounted, reactive, watch, computed } from 'vue'
 import themeOverrides from '../themeOverrides'; //引入自定义主题
 import axios from 'axios';
-import { AdminStore } from '../stores/AdminStore';
 import { useRouter } from 'vue-router'; // 添加路由hook
-import { computed } from 'vue';
 import { useStore } from 'vuex';
 
 // 引入加载动画模块

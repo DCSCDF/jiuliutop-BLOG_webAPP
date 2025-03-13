@@ -47,7 +47,6 @@ import Footer from '../../components/Footer.vue';
 import { AdminStore } from '../../stores/AdminStore';
 import { ref, reactive, onMounted, inject } from "vue";
 import { useRouter, useRoute } from 'vue-router';
-import { useMessage, useDialog, } from "naive-ui";
 import axios from 'axios'; // 导入 axios
 
 const message = useMessage();
