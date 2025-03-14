@@ -19,6 +19,10 @@ let routes = [
         component: () => import("../views/login.vue")
     },
     {
+        path: "/guestbook",
+        component: () => import("../views/guestbook.vue")
+    },
+    {
         path: "/dashboard",
         component: () => import("../views/dashboard/Dashboard.vue"),
         meta: { requiresAuth: true }, // 标记需要认证

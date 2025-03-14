@@ -6,7 +6,7 @@
                 class="mt-10 mx-4 xl:mx-60 lg:mx-40 md:mx-15 border border-gray-200 dark:border-none rounded-2xl md:px-5 px-1 py-10 bg-white/80 dark:bg-gray-800/70">
                 <div class="mx-auto">
                     <div class="lg:flex lg:items-center">
-                        <div class="w-full">
+                        <div class="lg:min-w-3xl md:min-w-xl min-w-sm">
                             <!-- 保持原有内容结构不变 -->
                             <div>
                                 <h1
@@ -51,7 +51,10 @@
                                 </div>
                                 <!-- 加载失败提示 -->
                                 <div v-else-if="loadFailed" class="text-center text-red-500">
-                                    加载失败，请稍后重试。
+                                    <p>加载失败，请稍后重试。</p>
+                                    <!-- <button @click="loadBlog" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+                                        重新加载
+                                    </button> -->
                                 </div>
                                 <!-- 内容区域 -->
                                 <article v-else class="prose prose-sm md:prose
@@ -68,7 +71,7 @@
                                 </article>
                             </div>
                             <div class="mt-16 border-b dark:border-gray-700 border-gray-200"></div>
-                            <div class="md:mx-10 mx-3 mt-10">
+                            <div v-if="showComment" class="md:mx-10 mx-3 mt-10">
                                 <div id="tcomment"></div>
                             </div>
                         </div>
@@ -83,29 +86,21 @@
 <script setup>
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-
+import { setupComment } from "../api.js";
 // 获取图片 URL
-const getImageUrl = (name) => {
-    return new URL(`../assets/img/${name}`, import.meta.url).href;
-};
+// const getImageUrl = (name) => {
+//     return new URL(`../assets/img/${name}`, import.meta.url).href;
+// };
 
 const route = useRoute();
 const blogInfo = ref({});
 const loading = ref(true); // 加载状态
 const loadFailed = ref(false); // 加载失败状态
+const showComment = ref(false);
 
-onMounted(() => {
-    loadBlog();
-    twikoo.init({
-        envId: "https://discuss.jiuliu.top/",
-        el: "#tcomment",
-        region: "ap-shanghai",
-        path: new URLSearchParams(window.location.search).get("id"), // 提取?id=后的参数值
-    });
-});
 
 const loadBlog = async () => {
     const router = useRouter();
@@ -124,6 +119,11 @@ const loadBlog = async () => {
                 ...res.data.data,
                 create_time: formattedTime
             };
+            // 关键修改点：延迟显示评论容器
+            nextTick(() => {
+                showComment.value = true; // 触发DOM渲染
+                initComment(); // 初始化评论
+            });
         } else {
             console.error("No blog data found in response:", res.data);
             blogInfo.value = { title: "未找到博客内容", content: "请检查博客 ID 是否正确" };
@@ -137,6 +137,19 @@ const loadBlog = async () => {
         loading.value = false; // 无论成功或失败，结束加载状态
     }
 };
+
+
+// 评论初始化函数
+const initComment = () => {
+    nextTick(() => {
+        setTimeout(() => {
+            setupComment('tcomment', new URLSearchParams(window.location.search).get("id"));
+        }, 500); // 添加500ms延迟确保DOM渲染
+    });
+};
+// console.log(new URLSearchParams(window.location.search).get("id"))
+
+onMounted(loadBlog);
 </script>
 
 <style>

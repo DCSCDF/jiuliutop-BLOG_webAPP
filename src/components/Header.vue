@@ -86,6 +86,7 @@ const menus = reactive([
     { name: "主页", href: "/" },
     { name: "友情链接", href: "/links" },
     { name: "登陆", href: "/adminlogin" },
+    { name: "留言", href: "/guestbook" },
     { name: "网盘", href: "https://pan.jiuliu.top/" },
     { name: "开往", href: "https://www.travellings.cn/go.html" },
 ]);

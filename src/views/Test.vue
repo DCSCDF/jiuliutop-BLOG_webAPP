@@ -9,8 +9,8 @@
 import Header from "../components/Header.vue"
 import Footer from "../components/Footer.vue"
 import themeOverrides from '../themeOverrides'; //引入自定义主题
-import { ref, reactive, onMounted, inject } from "vue";
-import { AdminStore } from '../stores/AdminStore';
+import { ref, onMounted, onUnmounted, reactive, watch, computed } from 'vue'
+
 
 
 

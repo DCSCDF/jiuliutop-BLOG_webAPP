@@ -496,34 +496,31 @@ onMounted(async () => {
 });
 /* console.log(blogListInfo) */
 
-// 新增Twikoo配置
-const twikooConfig = {
-    envId: "https://discuss.jiuliu.top/", // 保持与详情页一致
-    region: "ap-shanghai" // 根据实际地域修改
-}
+//配置
+import {
+    setupCommentSystem as initComment, // 别名保持语义
+    commentConfig
+} from "../api.js";
 
-
-// 新增评论数获取方法
 const fetchCommentsCount = async (blogs) => {
     try {
-        // 提取所有博客ID
-        const blogIds = blogs.map(blog => blog.id.toString());
+        // 确保初始化完成
+        await initComment('temp-container', 'preload');
 
-        // 调用Twikoo API
         const counts = await window.twikoo.getCommentsCount({
-            ...twikooConfig,
-            urls: blogIds // 使用博客ID作为路径标识
+            envId: commentConfig.apiEndpoint,
+            urls: blogs.map(b => b.id.toString())
         });
 
-        // 映射评论数到博客数据
         blogs.forEach((blog, index) => {
             blog.commentCount = counts[index]?.count || 0;
         });
     } catch (err) {
-        console.error('获取评论数失败:', err);
+        console.warn('评论统计获取降级:', err);
         blogs.forEach(blog => blog.commentCount = 0);
     }
 };
+
 
 // 重试加载
 const retryLoading = () => {

@@ -10,6 +10,7 @@ import { AdminStore } from './stores/AdminStore';
 import store from './stores/VuexStore'; // 确保导入 store
 import "./assets/css/text.css";
 import * as echarts from 'echarts'
+import { API } from "./api.js"
 //vue3.0取消了Vue.prototype，官方文档推荐使用globalProperties
 
 
@@ -27,9 +28,9 @@ axios.interceptors.request.use(config => {
 const app = createApp(App);
 // 定义项目名称和状态信息
 const projectStatus = {
-    version: "1.0.0",
-    status: "Running",
-    description: "BLOG项目.",
+    // version: "1.0.0",
+    // status: "Running",
+    // description: "BLOG项目.",
     author: "JiuLiuTOP",
     repository: "https://github.com/DCSCDF/jiuliutop-BLOG_webAPP"
 };
@@ -48,7 +49,7 @@ app.use(store); // 注册 store
 
 const adminStore = AdminStore()
 // axios 服务端IP接口
-axios.defaults.baseURL = "https://api.jiuliu.top"; //必改 网站后端API地址
+axios.defaults.baseURL = API.Url; // 网站后端API地址
 axios.interceptors.request.use((config) => {
     config.headers.token = adminStore.token
     return config
