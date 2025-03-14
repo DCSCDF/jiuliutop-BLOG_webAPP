@@ -116,7 +116,7 @@
                                                     <div class="flex flex-row">
                                                         <n-input :bordered="false" :theme-overrides="themeOverrides"
                                                             v-model:value="pageInfo.keyword" placeholder="输入关键词"
-                                                            @keyup.enter="loadBlogs(1)">
+                                                            @keyup.enter="loadBlogs(1)" style="color:white;">
                                                         </n-input>
                                                     </div>
                                                     <span

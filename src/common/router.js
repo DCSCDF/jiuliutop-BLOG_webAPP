@@ -56,19 +56,18 @@ const router = createRouter({
 });
 // 全局路由守卫
 router.beforeEach(async (to, from, next) => {
+    const token = localStorage.getItem('admin_token'); // 统一token键名
+
     if (to.path === '/adminlogin') {
-        const token = localStorage.getItem('admin_token'); // 统一token键名
         if (token) {
             next('/dashboard'); // 已登录用户强制跳转后台
-            return;
+        } else {
+            next(); // 未登录用户允许访问登录页
         }
-        next(); // 未登录用户允许访问登录页
         return;
     }
 
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        const token = localStorage.getItem("admin_token");
-
         if (!token) {
             next('/adminlogin');
             return;
@@ -88,13 +87,16 @@ router.beforeEach(async (to, from, next) => {
             }
         } catch (error) {
             // 处理网络错误和401未授权
-            if (error.response?.status === 401) {
+            if (error.response?.status === 401 || error.response?.status === 403) {
                 localStorage.removeItem("admin_token");
+                next('/adminlogin');
+            } else {
+                // next('/error'); // 处理其他错误，跳转到错误页面
             }
-            next('/adminlogin');
         }
     } else {
         next();
     }
 });
+
 export { router, routes };
