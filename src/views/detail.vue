@@ -67,11 +67,10 @@
                             dark:text-gray-200
                             dark:prose-code:text-gray-200
                             dark:prose-strong:text-gray-200
-                             
-                            
-                            
+                            prose-img:rounded-lg
+                            prose-img:my-0
                             " v-html="blogInfo.content"
-                                    style="max-width: none; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; width: 100%;">
+                                    style="max-width: none; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; ">
                                 </article>
                             </div>
                             <div class="mt-16 border-b dark:border-gray-700 border-gray-200"></div>
@@ -165,14 +164,7 @@ onMounted(loadBlog);
     text-decoration: none !important;
 }
 
-
-
-.prose img {
-    max-width: auto !important;
-    width: auto !important;
-    height: auto !important;
-    margin: 0 !important;
-    float: none !important;
-    display: block !important;
+.prose p img {
+    display: inline-block !important;
 }
 </style>

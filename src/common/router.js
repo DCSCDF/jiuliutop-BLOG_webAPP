@@ -26,6 +26,7 @@ let routes = [
         path: "/dashboard",
         component: () => import("../views/dashboard/Dashboard.vue"),
         meta: { requiresAuth: true }, // 标记需要认证
+
         children: [
             {
                 path: "",
@@ -48,37 +49,52 @@ let routes = [
     }
 ];
 
+
 const router = createRouter({
     history: createWebHistory(),
     routes
 });
-
 // 全局路由守卫
 router.beforeEach(async (to, from, next) => {
-    // 1. 如果是登录页，直接放行
     if (to.path === '/adminlogin') {
-        next();
-        return; // 终止后续逻辑
+        const token = localStorage.getItem('admin_token'); // 统一token键名
+        if (token) {
+            next('/dashboard'); // 已登录用户强制跳转后台
+            return;
+        }
+        next(); // 未登录用户允许访问登录页
+        return;
     }
-    // 2. 检查是否需要认证
+
     if (to.matched.some(record => record.meta.requiresAuth)) {
+        const token = localStorage.getItem("admin_token");
+
+        if (!token) {
+            next('/adminlogin');
+            return;
+        }
+
         try {
-            const token = localStorage.getItem("token");
             const response = await axios.get("/admin/profile", {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            if (response.status === 200) {
-                next(); // 认证通过
+
+            // 根据实际API响应结构调整（示例假设成功状态码为200）
+            if (response.data.code === 200) {
+                next();
             } else {
-                next('/adminlogin'); // 认证失败，跳转登录
+                localStorage.removeItem("admin_token");
+                next('/adminlogin');
             }
         } catch (error) {
-            localStorage.removeItem("token");
-            next('/adminlogin'); // 异常情况跳转登录
+            // 处理网络错误和401未授权
+            if (error.response?.status === 401) {
+                localStorage.removeItem("admin_token");
+            }
+            next('/adminlogin');
         }
     } else {
-        next(); // 无需认证的路由直接放行
+        next();
     }
 });
-
 export { router, routes };
