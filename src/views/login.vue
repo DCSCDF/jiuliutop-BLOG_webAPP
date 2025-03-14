@@ -106,16 +106,27 @@ const startCooldownTimer = () => {
     }, 1000);
 };
 
+import { encryptData } from '../encrypt';
 
 // 登录处理
 const login = async () => {
     if (cooldown.value) return;
 
+    // 表单验证
+    try {
+        await formRef.value?.validate();
+    } catch (error) {
+        // 表单验证失败，不执行登录请求
+        message.error("请正确填写表单");
+        return;
+    }
+
     loginBtnDisabled.value = true;
     try {
+        const encryptedPassword = encryptData(admin.password); // 加密密码
         const result = await axios.post("/admin/login", {
             account: admin.account,
-            password: admin.password
+            password: encryptedPassword // 发送加密后的密码
         }, {
             headers: {
                 "Content-Type": "application/json"
