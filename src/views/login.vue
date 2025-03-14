@@ -51,7 +51,7 @@
 <script setup>
 import { ref, reactive, onBeforeUnmount } from "vue";
 import { useRouter } from 'vue-router';
-import { useMessage } from 'naive-ui'; // 导入 useMessage
+import { useMessage, NButton, NCheckbox, NForm, NFormItem, NInput, NResult } from 'naive-ui';
 import axios from 'axios';
 import themeOverrides from '../themeOverrides';
 import { AdminStore } from '../stores/AdminStore';

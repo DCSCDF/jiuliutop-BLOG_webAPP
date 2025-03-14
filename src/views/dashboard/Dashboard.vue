@@ -30,7 +30,6 @@
                 <div
                     class="flex bg-white flex-row justify-center items-center my-6 border border-gray-300 rounded-lg dark:border-gray-700">
                     <!-- 新增内容容器 -->
-
                     <!-- 用户相关的内容 -->
                     <router-view></router-view>
                 </div>
@@ -48,7 +47,7 @@ import { AdminStore } from '../../stores/AdminStore';
 import { ref, reactive, onMounted, inject } from "vue";
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios'; // 导入 axios
-
+import { useMessage, useDialog, NButton } from 'naive-ui';
 const message = useMessage();
 const router = useRouter();
 const route = useRoute();

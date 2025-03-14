@@ -66,7 +66,11 @@
                             dark:prose-h6:text-gray-200
                             dark:text-gray-200
                             dark:prose-code:text-gray-200
-                            dark:prose-strong:text-gray-200" v-html="blogInfo.content"
+                            dark:prose-strong:text-gray-200
+                             
+                            
+                            
+                            " v-html="blogInfo.content"
                                     style="max-width: none; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; width: 100%;">
                                 </article>
                             </div>
@@ -161,12 +165,14 @@ onMounted(loadBlog);
     text-decoration: none !important;
 }
 
-/* 覆盖所有可能的父容器对图片的影响 */
-.prose :where(p, div, section, article)>img {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+
+
+.prose img {
+    max-width: auto !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
     float: none !important;
-    display: inline-block !important;
-    max-width: none !important;
+    display: block !important;
 }
 </style>
