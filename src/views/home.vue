@@ -116,7 +116,7 @@
                                                     <div class="flex flex-row">
                                                         <n-input :bordered="false" :theme-overrides="themeOverrides"
                                                             v-model:value="pageInfo.keyword" placeholder="输入关键词"
-                                                            @keyup.enter="loadBlogs(1)" style="color:white;">
+                                                            @keyup.enter="loadBlogs(1)">
                                                         </n-input>
                                                     </div>
                                                     <span
@@ -832,7 +832,13 @@ header {
 
     .n-input {
         background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
+
     }
+
+    .n-input__input-el {
+        color: white !important;
+    }
+
 }
 </style>
 
