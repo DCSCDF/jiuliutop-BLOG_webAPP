@@ -33,7 +33,6 @@ export const setupComment = (elementId, blogId) => {
             twikoo.init({
                 envId: commentapi,
                 el: `#${elementId}`,
-                region: "ap-shanghai",
                 path: blogId
             });
         } catch (err) {
@@ -66,7 +65,6 @@ export const setupCommentSystem = async (elementId, blogId) => {
         twikoo.init({
             envId: commentConfig.apiEndpoint,
             el: `#${elementId}`,
-            region: "ap-shanghai",
             path: String(blogId).trim() || location.pathname
         });
 
