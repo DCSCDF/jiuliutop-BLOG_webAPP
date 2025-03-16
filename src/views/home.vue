@@ -30,7 +30,8 @@
                                     <!-- <n-button color="#6b7281" style="width: 100px;">关于我</n-button> -->
                                 </div>
                             </div>
-                            <!-- <Technologystack></Technologystack> -->
+                            <!-- 技术栈显示 -->
+                            <Technologystack></Technologystack>
                         </div>
 
 
