@@ -34,7 +34,6 @@
                             <Technologystack></Technologystack>
                         </div>
 
-
                         <!-- 暂时隐藏模型 需要显示可以在class里面加上lg:block -->
                         <div class="hidden items-center justify-center mt-6 lg:mt-0 w-auto max-w-xl lg:w-1/2">
                             <div ref="modelContainer" class="w-full h-96"></div>
@@ -58,9 +57,9 @@
                             </div>
                             <!-- 如果文章数量不为空，显示文章列表 -->
                             <template v-else>
-                                <n-card v-for="(blog, index) in blogListInfo" :key="index"
+                                <n-card ref="card" v-for="(blog, index) in blogListInfo" :key="index"
                                     :content-style="{ padding: 0 }" @click="toDetail(blog)">
-                                    <div class="p-5 flex flex-row">
+                                    <div class="p-5 flex flex-row ">
                                         <!-- 图片区域 -->
                                         <div class="md:w-50 w-30 h-36 flex-shrink-0 mr-3">
                                             <img class="object-cover w-full h-full rounded-md" :src="blog.imageUrl"
@@ -157,6 +156,51 @@ import themeOverrides from '../themeOverrides'; //引入自定义主题
 import axios from 'axios';
 import { useRouter } from 'vue-router'; // 添加路由hook
 import { useStore } from 'vuex';
+
+// // 使用 ref 绑定 DOM 元素
+// const card = ref(null);
+
+// // 计算元素的累积偏移量
+// const cumulativeOffset = (element) => {
+//     let top = 0,
+//         left = 0;
+//     do {
+//         top += element.offsetTop || 0;
+//         left += element.offsetLeft || 0;
+//         element = element.offsetParent;
+//     } while (element);
+
+//     return {
+//         top,
+//         left,
+//     };
+// };
+
+// // 鼠标移动事件处理函数
+// const handleMouseMove = (e) => {
+//     if (!card.value) return;
+
+//     const x = (e.pageX - cumulativeOffset(card.value).left - 350 / 2) * -1 / 100;
+//     const y = (e.pageY - cumulativeOffset(card.value).top - 350 / 2) * -1 / 100;
+
+//     const matrix = [
+//         [1, 0, 0, -x * 0.00006],
+//         [0, 1, 0, -y * 0.00006],
+//         [0, 0, 1, 1],
+//         [0, 0, 0, 1],
+//     ];
+//     // 更新 card 的 transform 样式
+//     card.value.style.transform = `matrix3d(${matrix.toString()})`;
+// };
+
+// // 组件挂载时添加事件监听器
+// onMounted(() => {
+//     document.addEventListener('mousemove', handleMouseMove);
+// });
+// // 组件卸载时移除事件监听器
+// onUnmounted(() => {
+//     document.removeEventListener('mousemove', handleMouseMove);
+// });
 
 // 引入加载动画模块
 import LoadingSpinner from '../components/LoadingSpinner.vue';
@@ -531,6 +575,10 @@ const retryLoading = () => {
 };
 </script>
 <style>
+/* body {
+    background-color: #fff1f1;
+} */
+
 /* CSS */
 @media (max-width: 768px) {
     .n-affix--fixed {

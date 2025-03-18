@@ -13,8 +13,16 @@ import * as echarts from 'echarts'
 import { API } from "./api.js"
 //vue3.0取消了Vue.prototype，官方文档推荐使用globalProperties
 
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons'; // 实心图标
+import { far } from '@fortawesome/free-regular-svg-icons'; // 常规图标
+import { fab } from '@fortawesome/free-brands-svg-icons'; // 品牌图标
 
+// 将图标添加到库中
+library.add(fas, far, fab);
 const { message, notification, dialog } = createDiscreteApi(["message", "notification", "dialog"]);
+
 // 添加请求拦截器
 axios.interceptors.request.use(config => {
     const token = localStorage.getItem('admin_token')
@@ -42,6 +50,7 @@ app.provide("notification", notification);
 app.provide("dialog", dialog);
 app.provide("axios", axios);
 
+app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(naive);
 app.use(createPinia());
 app.use(router);
