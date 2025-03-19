@@ -156,6 +156,14 @@ onMounted(loadBlog);
 </script>
 
 <style>
+pre code {
+    /* width: none !important;
+    min-width: none !important;
+    max-width: none !important; */
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
 .prose h1,
 .prose h2,
 .prose h3,
