@@ -69,6 +69,7 @@
                             dark:prose-strong:text-gray-200
                             prose-img:rounded-lg
                             prose-img:my-0
+                            line-numbers
                             " v-html="blogInfo.content"
                                     style="max-width: none; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; ">
                                 </article>
@@ -87,81 +88,93 @@
 </template>
 
 <script setup>
+import hljs from 'highlight.js';
+import 'highlight.js/styles/atom-one-dark.css';
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import { ref, onMounted, nextTick } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import { setupComment } from "../api.js";
-// 获取图片 URL
-// const getImageUrl = (name) => {
-//     return new URL(`../assets/img/${name}`, import.meta.url).href;
-// };
 
 const route = useRoute();
 const blogInfo = ref({});
-const loading = ref(true); // 加载状态
-const loadFailed = ref(false); // 加载失败状态
+const loading = ref(true);
+const loadFailed = ref(false);
 const showComment = ref(false);
-
 
 const loadBlog = async () => {
     const router = useRouter();
 
     try {
         let res = await axios.get("/blog/detail?id=" + route.query.id);
-        /* console.log("API Response:", res.data); */
 
         if (res.data && res.data.data) {
-            // 解析时间戳
             const createTime = new Date(res.data.data.create_time);
-            const formattedTime = createTime.toLocaleString(); // 可以根据需要调整时间格式
+            const formattedTime = createTime.toLocaleString();
 
-            // 将解析后的时间添加到 blogInfo 对象中
             blogInfo.value = {
                 ...res.data.data,
                 create_time: formattedTime
             };
-            // 关键修改点：延迟显示评论容器
+
             nextTick(() => {
-                showComment.value = true; // 触发DOM渲染
-                initComment(); // 初始化评论
+                showComment.value = true;
+                initComment();
             });
         } else {
             console.error("No blog data found in response:", res.data);
             blogInfo.value = { title: "未找到博客内容", content: "请检查博客 ID 是否正确" };
-            router.push("/"); // 跳转到主页
+            router.push("/");
         }
     } catch (error) {
         console.error("Failed to load blog:", error);
         blogInfo.value = { title: "加载失败", content: "未找到博客内容，请稍后重试" };
-        loadFailed.value = true; // 标记加载失败
+        loadFailed.value = true;
     } finally {
-        loading.value = false; // 无论成功或失败，结束加载状态
+        loading.value = false;
     }
 };
 
-
-// 评论初始化函数
 const initComment = () => {
     nextTick(() => {
         setTimeout(() => {
             setupComment('tcomment', new URLSearchParams(window.location.search).get("id"));
-        }, 500); // 添加500ms延迟确保DOM渲染
+        }, 500);
     });
 };
-// console.log(new URLSearchParams(window.location.search).get("id"))
 
-onMounted(loadBlog);
+import Prism from "prismjs";
+import "prismjs/themes/prism-tomorrow.min.css";
+import "prismjs/plugins/line-numbers/prism-line-numbers.min.js"//行号插件
+import "prismjs/plugins/line-numbers/prism-line-numbers.min.css"//行号插件的样式
+
+onMounted(async () => {
+    await loadBlog(); // 等待 loadBlog 执行完毕
+    Prism.highlightAll(); // 在 loadBlog 完成后执行代码高亮
+});
+
 </script>
 
 <style>
-pre code {
-    /* width: none !important;
-    min-width: none !important;
-    max-width: none !important; */
-    white-space: pre-wrap;
-    word-break: break-word;
+pre {
+    white-space: pre-wrap !important;
+    /* 允许换行 */
+    word-break: break-word !important;
+    /* 允许单词换行 */
+    background: #1f2937 !important;
+    /* 背景颜色 */
+}
+
+code {
+    white-space: pre-wrap !important;
+    /* 允许换行 */
+    word-break: break-word !important;
+    /* 允许单词换行 */
+}
+
+pre {
+    background: #1f2937 !important;
 }
 
 .prose h1,
@@ -169,6 +182,7 @@ pre code {
 .prose h3,
 .prose h4,
 .prose h5 {
+    /* color: none !important; */
     text-decoration: none !important;
 }
 

@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </section>
-            <section class="dark:bg-gray-900 mb-44">
+            <section class="mb-44">
                 <div class="container px-6 mx-auto">
                     <div class="flex flex-wrap justify-center flex-row gap-8 mx-auto">
                         <!-- 动态渲染链接列表 -->

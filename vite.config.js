@@ -5,15 +5,17 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  server: {
-    headers: {
-      // 配置 MIME 类型
-    }
-  },
-  plugins: [
-    vue(),
-    tailwindcss(),
-  ],
+    server: {
+        headers: {
+            // 配置 MIME 类型
+        }
+    },
+    plugins: [
+        vue(),
+        tailwindcss(),
+
+
+    ],
 })
 /* const router = createRouter({
   history: createWebHistory(),
