@@ -45,8 +45,8 @@
     </div>
 </template>
 <script setup>
-
-
+import { ChevronBack, ChevronForward } from '@vicons/ionicons5'
+import { ref, computed } from 'vue'
 // 卡片数据生成
 const randomRotation = () => (Math.random() * 10 - 5).toFixed(1)
 const pastelColors = [

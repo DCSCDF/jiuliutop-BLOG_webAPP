@@ -5,29 +5,28 @@
         </p>
         <ul class="flex items-center gap-3.5 text-slate-500 dark:text-slate-500">
             <li style="opacity: 1; transform: none;">
-                <div class="transition duration-200 hover:text-[#06B6D4]">
+                <div class="transition duration-200 ">
                     <font-awesome-icon :icon="['fab', 'square-js']" size="2x" />
                 </div>
             </li>
             <li style="opacity: 1; transform: none;">
-                <div class="transition duration-200 hover:text-[#06B6D4]">
+                <div class="transition duration-200 ">
                     <font-awesome-icon :icon="['fab', 'node']" size="2x" />
                 </div>
             </li>
             <li style="opacity: 1; transform: none;">
-                <div class="transition duration-200 hover:text-[#06B6D4]">
+                <div class="transition duration-200 ">
                     <font-awesome-icon :icon="['fab', 'vuejs']" size="2x" />
                 </div>
             </li>
 
-
+            <!-- 分割 -->
             <li style="opacity: 1; transform: none;">
                 <div class="h-3 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
             </li>
 
-
             <li style="opacity: 1; transform: none;">
-                <div class="transition duration-200 hover:text-[#06B6D4]">
+                <div class="transition duration-200 ">
                     <font-awesome-icon :icon="['fab', 'linux']" size="2x" />
                 </div>
             </li>
@@ -35,6 +34,6 @@
     </div>
 </template>
 
-<script>
+<script setup>
 
 </script>

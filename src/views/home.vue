@@ -16,7 +16,7 @@
             <main class="mb-auto">
                 <div class="container px-6 pt-10 py-2 mx-auto lg:w-6xl">
                     <div class="items-center lg:flex">
-                        <div class="w-full lg:w-1/2 mt-10">
+                        <div class="w-full mt-10">
                             <div class="lg:max-w-xl">
                                 <h1 class="text-3xl font-semibold text-gray-800 dark:text-white lg:text-5xl">Wellcome！
                                     <br>
@@ -34,14 +34,22 @@
                         </div>
 
                         <!-- 暂时隐藏模型 需要显示可以在class里面加上lg:block -->
-                        <div class="hidden items-center justify-center mt-6 lg:mt-0 w-auto max-w-xl lg:w-1/2">
-                            <div ref="modelContainer" class="w-full h-96"></div>
+                        <div class="lg:block w-full lg:w-md flex items-center justify-center mt-6 lg:mt-0 ">
+                            <!-- <div ref="modelContainer" class="w-full h-96"></div> -->
+                            <Weather></Weather>
                         </div>
                     </div>
                 </div>
 
+
+                <!-- card列表 -->
+                <!-- <Carditem></Carditem> -->
+
+
                 <!-- 热力图 启用去掉注释就行 -->
                 <!-- <Heatmap></Heatmap> -->
+
+
                 <n-layout class=" py-4 px-2 md:px-10" style="background-color: rgba(0,0,0,0);">
                     <!-- <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
                         <h1 class=" text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4">我的文章:</h1>
@@ -147,6 +155,10 @@ import About from "../components/AboutMe.vue"
 import Header from "../components/Header.vue"
 import Footer from "../components/Footer.vue"
 import Heatmap from "../components/Heatmap.vue"
+import Carditem from "../components/Carditem.vue"
+import Weather from "../components/Weather.vue"
+
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';

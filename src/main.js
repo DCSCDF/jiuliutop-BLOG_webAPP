@@ -7,7 +7,6 @@ import naive from 'naive-ui';
 import { createDiscreteApi } from 'naive-ui';
 import themeOverrides from './themeOverrides'; // 引入自定义主题
 import { AdminStore } from './stores/AdminStore';
-import "./assets/css/text.css";
 import * as echarts from 'echarts'
 import { API } from "./api.js"
 //vue3.0取消了Vue.prototype，官方文档推荐使用globalProperties
