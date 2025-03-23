@@ -51,9 +51,12 @@
         </div>
     </div>
 </template>
+
+
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import noAuthAxios from '../utils/noAuthAxios'
 
 const API_KEY = '462d085eca5f4f7487f2afdca4527acb' // 替换为你的和风天气API Key
 const city = ref('101120201') // 默认城市编码（北京）
@@ -104,16 +107,12 @@ const fetchWeather = async () => {
         if (!/^\d{9}$/.test(city.value)) {
             throw new Error('请输入9位城市编码(LocationID)');
         }
-        // 修改后的请求路径
-        const response = await axios.get('https://devapi.qweather.com/v7/weather/now', {
-            params: {
-                location: city.value,
-                key: API_KEY
-            }
+        const response = await noAuthAxios.get('/v7/weather/now', {
+            params: { location: city.value, key: API_KEY }
         });
 
         // 打印 API 返回数据
-        console.log(response.data);
+        // console.log(response.data);
 
         // 强化错误处理
         if (response.data.code !== '200') {
