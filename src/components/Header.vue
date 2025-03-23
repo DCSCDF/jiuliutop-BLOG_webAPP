@@ -64,19 +64,18 @@
 </template>
 
 <script setup>
-
 import { reactive, ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import themeOverrides from '../themeOverrides'; // 引入自定义主题
 import axios from 'axios';
-import { useStore } from 'vuex'; // 引入 Vuex
+import { useCategoryStore } from '../stores/AdminStore'; // 引入 Pinia Store
 import { useRoute } from 'vue-router';
 
 const settingsData = ref(null);
 const loading = ref(true);
 const route = useRoute();
-const store = useStore();
+const categoryStore = useCategoryStore(); // 使用 Pinia Store
 const header = ref(null);
-const selectedCategory = ref(0);
+const selectedCategory = ref(categoryStore.selectedCategoryId); // 从 Pinia Store 获取初始值
 const categoryOptions = ref([]);
 const blogListInfo = ref([]);
 const lastScrollPosition = ref(0);
@@ -173,7 +172,7 @@ const loadCategorys = async () => {
 // 分类选择事件
 const searchByCategory = (value) => {
     selectedCategory.value = value;
-    store.dispatch('updateSelectedCategoryId', value);
+    categoryStore.updateSelectedCategoryId(value); // 调用 Pinia Store 的 action
 };
 
 // 初始化

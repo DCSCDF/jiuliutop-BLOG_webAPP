@@ -1,5 +1,4 @@
 <template>
-
     <div class="flex flex-col min-h-screen">
         <!-- 加载动画 -->
         <LoadingSpinner v-if="isLoading" />
@@ -155,61 +154,14 @@ import { ref, onMounted, onUnmounted, reactive, watch, computed } from 'vue'
 import themeOverrides from '../themeOverrides'; //引入自定义主题
 import axios from 'axios';
 import { useRouter } from 'vue-router'; // 添加路由hook
-import { useStore } from 'vuex';
-
-// // 使用 ref 绑定 DOM 元素
-// const card = ref(null);
-
-// // 计算元素的累积偏移量
-// const cumulativeOffset = (element) => {
-//     let top = 0,
-//         left = 0;
-//     do {
-//         top += element.offsetTop || 0;
-//         left += element.offsetLeft || 0;
-//         element = element.offsetParent;
-//     } while (element);
-
-//     return {
-//         top,
-//         left,
-//     };
-// };
-
-// // 鼠标移动事件处理函数
-// const handleMouseMove = (e) => {
-//     if (!card.value) return;
-
-//     const x = (e.pageX - cumulativeOffset(card.value).left - 350 / 2) * -1 / 100;
-//     const y = (e.pageY - cumulativeOffset(card.value).top - 350 / 2) * -1 / 100;
-
-//     const matrix = [
-//         [1, 0, 0, -x * 0.00006],
-//         [0, 1, 0, -y * 0.00006],
-//         [0, 0, 1, 1],
-//         [0, 0, 0, 1],
-//     ];
-//     // 更新 card 的 transform 样式
-//     card.value.style.transform = `matrix3d(${matrix.toString()})`;
-// };
-
-// // 组件挂载时添加事件监听器
-// onMounted(() => {
-//     document.addEventListener('mousemove', handleMouseMove);
-// });
-// // 组件卸载时移除事件监听器
-// onUnmounted(() => {
-//     document.removeEventListener('mousemove', handleMouseMove);
-// });
+import { useCategoryStore } from '../stores/AdminStore.js'; // 引入 Pinia Store
 
 // 引入加载动画模块
 import LoadingSpinner from '../components/LoadingSpinner.vue';
+
 //全局加载状态
 const isLoading = ref(true)
 const isError = ref(false) // 错误状态
-// finally {
-//         isLoading.value = false;
-//     }
 
 // header响应逻辑
 const headerOffset = ref(70) // 默认初始值
@@ -234,7 +186,6 @@ const affixStyle = ref({})
 const originalWidth = ref(0)
 
 // 处理affix状态变化
-
 const handleAffixChange = (isFixed) => {
     // 移动端直接禁止固定
     if (isMobile.value) return false
@@ -263,16 +214,17 @@ onUnmounted(() => {
     window.removeEventListener('resize', () => { })
 })
 
-// 使用 useStore 获取 Vuex Store
-const store = useStore();
+// 使用 useCategoryStore 获取 Pinia Store
+const categoryStore = useCategoryStore();
 
 // 使用 computed 获取选中的分类 ID
-const selectedCategoryId = computed(() => store.state.selectedCategoryId);
-/* console.log(selectedCategoryId) */
+const selectedCategoryId = computed(() => categoryStore.selectedCategoryId);
+
 const router = useRouter(); // 获取路由实例
 const toDetail = (blog) => {
     router.push({ path: "/detail", query: { id: blog.id } })
 }
+
 //  获取基础路径（兼容开发和生产环境）
 const basePath = import.meta.env.BASE_URL
 // 新增防抖相关变量
@@ -521,23 +473,10 @@ onUnmounted(() => {
 })
 
 const settingsData = ref(null);
-
+import { fetchSettings } from '../utils/fetchSettings'; // 引入封装的 fetchSettings 函数
 
 onMounted(async () => {
-    try {
-        const id = 1; // 假设你要查询的 id 是 1
-        const res = await axios.get(`/setting/${id}`);
-        if (res.data.code === 200) {
-            settingsData.value = res.data.data;
-        } else {
-            console.error('未找到对应数据');
-        }
-    } catch (error) {
-        console.error('查询失败', error);
-        isError.value = true;
-    } finally {
-        isLoading.value = false;
-    }
+    settingsData.value = await fetchSettings();
 });
 /* console.log(blogListInfo) */
 

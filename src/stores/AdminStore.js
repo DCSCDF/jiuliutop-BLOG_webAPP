@@ -22,3 +22,19 @@ export const AdminStore = defineStore("admin", {
     persist: true,// 需要安装pinia持久化插件
     getters: {}
 })
+
+export const useCategoryStore = defineStore('category', {
+    state: () => ({
+        selectedCategoryId: 0, // 默认值
+    }),
+    actions: {
+        // 相当于 Vuex 的 mutations
+        setSelectedCategoryId(id) {
+            this.selectedCategoryId = id;
+        },
+        // 相当于 Vuex 的 actions
+        updateSelectedCategoryId(id) {
+            this.setSelectedCategoryId(id);
+        },
+    },
+});

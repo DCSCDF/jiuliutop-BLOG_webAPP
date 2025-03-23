@@ -54,6 +54,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 });
+
 // 全局路由守卫
 router.beforeEach(async (to, from, next) => {
     const token = localStorage.getItem('admin_token'); // 统一token键名

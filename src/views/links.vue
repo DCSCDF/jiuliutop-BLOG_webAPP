@@ -78,38 +78,16 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-// 引入加载动画模块
+
 import LoadingSpinner from '../components/LoadingSpinner.vue';
-//全局加载状态
-const isLoading = ref(true)
-const isError = ref(false) // 错误状态
-// finally {
-//         isLoading.value = false;
-//     }
 
-
+// 全局加载状态
+const isLoading = ref(true);
+const isError = ref(false); // 错误状态
 
 // 定义响应式数据
-const settingsData = ref(null);
 const links = ref([]);
-const loading = ref(true);
-
-// 获取设置信息
-const fetchSettings = async () => {
-    try {
-        const id = 1; // 假设你要查询的 id 是 1
-        const res = await axios.get(`/setting/${id}`);
-        if (res.data.code === 200) {
-            settingsData.value = res.data.data;
-        } else {
-            console.error('未找到对应数据');
-        }
-    } catch (error) {
-        console.error('查询失败', error);
-    } finally {
-        isLoading.value = false;
-    }
-};
+const settingsData = ref(null);
 
 // 获取链接列表
 const fetchLinks = async () => {
@@ -134,36 +112,32 @@ const openLink = (url) => {
 
 // 格式化时间戳为可读日期
 const formatDate = (timestamp) => {
-    // 确保时间戳是数字
     if (typeof timestamp !== 'number') {
         timestamp = Number(timestamp);
     }
-
-    // 检查时间戳是否有效
     if (isNaN(timestamp) || timestamp <= 0) {
         return '无效日期';
     }
-
-    // 如果时间戳是秒，转换为毫秒
     if (timestamp < 1000000000000) {
         timestamp *= 1000;
     }
-
     const date = new Date(timestamp);
-
-    // 获取年、月、日
-    const year = date.getFullYear(); // 年
-    const month = date.getMonth() + 1; // 月（0-11，需要加1）
-    const day = date.getDate(); // 日
-
-    // 返回格式为 "YYYY-M-D"
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
     return `${year}-${month}-${day}`;
 };
+import { fetchSettings } from '../utils/fetchSettings'; // 引入封装的 fetchSettings 函数
 // 页面加载时调用
 onMounted(async () => {
-    await fetchSettings();
-    await fetchLinks();
-    loading.value = false;
+    try {
+        settingsData.value = await fetchSettings(); // 调用封装的 fetchSettings 函数
+        await fetchLinks();
+    } catch (error) {
+        isError.value = true;
+    } finally {
+        isLoading.value = false;
+    }
 });
 </script>
 

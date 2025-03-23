@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import hljs from 'highlight.js';
+
 import 'highlight.js/styles/atom-one-dark.css';
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
@@ -136,7 +136,7 @@ const loadBlog = async () => {
     }
 };
 
-const initComment = () => {
+const initComment = async () => {
     nextTick(() => {
         setTimeout(() => {
             setupComment('tcomment', new URLSearchParams(window.location.search).get("id"));
@@ -149,6 +149,8 @@ import "prismjs/themes/prism-tomorrow.min.css";
 import "prismjs/plugins/line-numbers/prism-line-numbers.min.js"//行号插件
 import "prismjs/plugins/line-numbers/prism-line-numbers.min.css"//行号插件的样式
 
+
+// 异步执行
 onMounted(async () => {
     await loadBlog(); // 等待 loadBlog 执行完毕
     Prism.highlightAll(); // 在 loadBlog 完成后执行代码高亮
