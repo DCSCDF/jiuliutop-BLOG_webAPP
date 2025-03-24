@@ -48,23 +48,23 @@
     </header>
 
     <!-- 背景图片 -->
-    <!-- 修改后的背景容器 -->
     <div ref="backgroundImage" class="fixed -z-30 top-0 h-full inset-x-0  flex justify-center ">
 
         <!-- 添加定位层 -->
         <div class="relative w-full h-full">
-            <css-doodle class="absolute  inset-0 w-full h-full" style="filter: blur(200px); opacity: 0.6;">
+            <css-doodle class="absolute  inset-0 w-full h-full" style="filter: blur(150px); opacity: 0.3;">
                 :doodle {
                 @grid: 1x8 / 100%;
                 height: 100%;
                 overflow: visible;
-                /* 新增容器级模糊（类iOS毛玻璃效果）[3](@ref) */
+                /* 新增容器级模糊（类iOS毛玻璃效果） */
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
                 }
+
                 @place-cell: center;
-                width: @rand(40%, 80%);
-                height: @rand(40%, 80%);
+                width: @rand(20%, 40%); /* 限制宽度范围 */
+                height: @rand(20%, 40%); /* 限制高度范围 */
                 transform: translate(@rand(-200%, 200%), @rand(-60%, 60%))
                 scale(@rand(.8, 1.8))
                 skew(@rand(45deg));
