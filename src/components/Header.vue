@@ -48,8 +48,10 @@
     </header>
 
     <!-- 背景图片 -->
-    <div class="absolute -z-10 top-0 inset-x-0 h-screen flex justify-center overflow-hidden pointer-events-none">
+    <div ref="backgroundImage"
+        class="fixed -z-10 top-0 inset-x-0 h-screen flex justify-center overflow-hidden pointer-events-none transition-all duration-500">
         <div class="w-full h-full bg-cover bg-center bg-no-repeat">
+
             <picture>
                 <source :srcset="getImageUrl('docs.avif')" type="image/avif"><img :src="getImageUrl('docs.png')" alt=""
                     class="w-full h-full object-cover dark:hidden z-10" decoding="async">
@@ -59,6 +61,7 @@
                     :src="getImageUrl('docs-dark.png')" alt="" class="w-full h-full object-cover hidden dark:block z-10"
                     decoding="async">
             </picture>
+
         </div>
     </div>
 </template>
@@ -70,6 +73,8 @@ import axios from 'axios';
 import { useCategoryStore } from '../stores/AdminStore'; // 引入 Pinia Store
 import { useRoute } from 'vue-router';
 
+// 添加背景图片引用
+const backgroundImage = ref(null);
 const settingsData = ref(null);
 const loading = ref(true);
 const route = useRoute();
@@ -120,6 +125,7 @@ const handleScroll = () => {
     const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
     if (currentScrollPosition < 0) return;
 
+    // 头部隐藏逻辑
     if (currentScrollPosition > 200) {
         if (currentScrollPosition > lastScrollPosition.value) {
             header.value.style.transform = "translateY(-100%)";
@@ -131,6 +137,35 @@ const handleScroll = () => {
     }
 
     lastScrollPosition.value = currentScrollPosition;
+
+
+
+    // 视差效果调整
+    if (backgroundImage.value) {
+        // 修改视差系数为负值实现上移
+        const parallaxFactor = 0.3;
+        const parallaxY = currentScrollPosition * parallaxFactor * -1; // 乘以-1实现反向移动
+
+        // 应用变换（移除透明度控制）
+        backgroundImage.value.style.transform = `translateY(${parallaxY}px)`;
+    }
+    // // 视差效果调整
+    // if (backgroundImage.value) {
+    //     // 使用更小的视差系数（0.3-0.5之间效果最佳）
+    //     const parallaxFactor = 0.4;
+    //     const parallaxY = currentScrollPosition * parallaxFactor;
+
+    //     // 透明度计算（滚动超过200px开始淡出）
+    //     const fadeStart = 200;
+    //     const fadeLength = 500;
+    //     const opacity = currentScrollPosition < fadeStart
+    //         ? 1
+    //         : 1 - Math.min((currentScrollPosition - fadeStart) / fadeLength, 1);
+
+    //     // 应用变换
+    //     backgroundImage.value.style.transform = `translateY(${parallaxY}px)`;
+    //     backgroundImage.value.style.opacity = opacity;
+    // }
 };
 
 // 移除滚动事件监听
@@ -215,5 +250,19 @@ header {
     .n-button:hover {
         background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
     }
+}
+
+.absolute {
+    /* 添加 will-change 优化动画性能 */
+    will-change: transform, opacity;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.fixed {
+    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    backface-visibility: hidden;
+    perspective: 1000;
+    transform-style: preserve-3d;
 }
 </style>
