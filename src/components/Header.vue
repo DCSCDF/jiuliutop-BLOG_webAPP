@@ -48,11 +48,11 @@
     </header>
 
     <!-- 背景图片 -->
-    <div ref="backgroundImage" class="fixed -z-30 top-0 h-full inset-x-0  flex justify-center ">
+    <div ref="backgroundImage" class="fixed -z-30 top-0 h-full inset-x-0 flex justify-center ">
 
         <!-- 添加定位层 -->
         <div class="relative w-full h-full">
-            <css-doodle class="absolute  inset-0 w-full h-full" style="filter: blur(150px); opacity: 0.3;">
+            <css-doodle class="absolute inset-0 w-full h-full" style="filter: blur(120px); opacity: 0.3;">
                 :doodle {
                 @grid: 1x8 / 100%;
                 height: 100%;
@@ -63,8 +63,8 @@
                 }
 
                 @place-cell: center;
-                width: @rand(20%, 40%); /* 限制宽度范围 */
-                height: @rand(20%, 40%); /* 限制高度范围 */
+                width: @rand(30%, 60%); /* 限制宽度范围 */
+                height: @rand(30%, 60%); /* 限制高度范围 */
                 transform: translate(@rand(-200%, 200%), @rand(-60%, 60%))
                 scale(@rand(.8, 1.8))
                 skew(@rand(45deg));
@@ -125,6 +125,7 @@
     </div>
 
 </template>
+
 
 <script setup>
 import { reactive, ref, onMounted, onBeforeUnmount, computed } from 'vue';
@@ -321,7 +322,7 @@ header {
 }
 
 .fixed {
-    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
     backface-visibility: hidden;
     perspective: 1000;
     transform-style: preserve-3d;
