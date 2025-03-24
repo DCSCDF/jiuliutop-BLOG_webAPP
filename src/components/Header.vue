@@ -48,22 +48,82 @@
     </header>
 
     <!-- 背景图片 -->
-    <div ref="backgroundImage"
-        class="fixed -z-10 top-0 inset-x-0 h-screen flex justify-center overflow-hidden pointer-events-none transition-all duration-500">
-        <div class="w-full h-full bg-cover bg-center bg-no-repeat">
+    <!-- 修改后的背景容器 -->
+    <div ref="backgroundImage" class="fixed -z-30 top-0 h-full inset-x-0  flex justify-center ">
 
-            <picture>
-                <source :srcset="getImageUrl('docs.avif')" type="image/avif"><img :src="getImageUrl('docs.png')" alt=""
-                    class="w-full h-full object-cover dark:hidden z-10" decoding="async">
-            </picture>
-            <picture>
-                <source :srcset="getImageUrl('docs-dark.avif')" type="image/avif"><img
-                    :src="getImageUrl('docs-dark.png')" alt="" class="w-full h-full object-cover hidden dark:block z-10"
-                    decoding="async">
-            </picture>
+        <!-- 添加定位层 -->
+        <div class="relative w-full h-full">
+            <css-doodle class="absolute  inset-0 w-full h-full" style="filter: blur(200px); opacity: 0.6;">
+                :doodle {
+                @grid: 1x8 / 100%;
+                height: 100%;
+                overflow: visible;
+                /* 新增容器级模糊（类iOS毛玻璃效果）[3](@ref) */
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                }
+                @place-cell: center;
+                width: @rand(40%, 80%);
+                height: @rand(40%, 80%);
+                transform: translate(@rand(-200%, 200%), @rand(-60%, 60%))
+                scale(@rand(.8, 1.8))
+                skew(@rand(45deg));
 
+                /* 新增元素级动态模糊 */
+                filter:
+                blur(@rand(2px, 8px))
+                saturate(@rand(100%, 180%))
+                contrast(@rand(90%, 110%));
+
+                clip-path: polygon(
+                @r(0, 30%) @r(0, 50%),
+                @r(30%, 60%) @r(0%, 30%),
+                @r(60%, 100%) @r(0%, 50%),
+                @r(60%, 100%) @r(50%, 100%),
+                @r(30%, 60%) @r(60%, 100%),
+                @r(0, 30%) @r(60%, 100%)
+                );
+
+                /* 优化后的遮罩系统 */
+                -webkit-mask:
+                linear-gradient(
+                to bottom,
+                rgba(0,0,0,1) 0%,
+                rgba(0,0,0,0) 100%
+                )
+                content-box,
+                linear-gradient(black, black);
+                mask:
+                linear-gradient(
+                to bottom,
+                rgba(0,0,0,1) 0%,
+                rgba(0,0,0,0) 100%
+                )
+                content-box,
+                linear-gradient(black, black);
+
+                /* 增强的色彩系统 */
+                background: hsla(
+                @pick(4, 340, 291, 259, 231, 241, 342, 49, 187, 199, 207, 169, 114, 54, 32, 158),
+                @rand(40%, 60%),
+                @rand(50%, 70%),
+                @rand(.5, .8)
+                );
+
+                /* 新增动态动画 */
+                animation: float 20s ease-in-out infinite;
+                @keyframes float {
+                50% {
+                transform:
+                translate(@rand(-200%, 200%), @rand(-60%, 60%))
+                scale(@rand(0.8, 1.5))
+                rotate(@rand(-15deg, 15deg));
+                }
+                }
+            </css-doodle>
         </div>
     </div>
+
 </template>
 
 <script setup>
@@ -72,6 +132,7 @@ import themeOverrides from '../themeOverrides'; // 引入自定义主题
 import axios from 'axios';
 import { useCategoryStore } from '../stores/AdminStore'; // 引入 Pinia Store
 import { useRoute } from 'vue-router';
+import 'css-doodle'
 
 // 添加背景图片引用
 const backgroundImage = ref(null);
