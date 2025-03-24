@@ -53,7 +53,7 @@ JIULIUTOP-APP/
 ### 开发环境
 ```bash
 #克隆项目
-git clone https://github.com/your-repo/JIULIUTOP-APP.git
+git clone https://github.com/DCSCDF/jiuliutop-BLOG_webAPP
 cd JIULIUTOP-APP
 
 # 安装依赖
