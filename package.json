@@ -9,6 +9,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@better-scroll/core": "^2.5.1",
+        "@better-scroll/mouse-wheel": "^2.5.1",
+        "@better-scroll/pull-down": "^2.5.1",
         "@fortawesome/fontawesome-free": "^6.7.2",
         "@fortawesome/fontawesome-svg-core": "^6.7.2",
         "@fortawesome/free-brands-svg-icons": "^6.7.2",
@@ -37,6 +40,7 @@
         "prismjs": "^1.30.0",
         "sass": "^1.85.0",
         "shiki": "^3.2.1",
+        "smooth-scrollbar": "^8.8.4",
         "stickyfill": "^1.1.1-strict",
         "tailwindcss": "^4.0.7",
         "three": "^0.173.0",

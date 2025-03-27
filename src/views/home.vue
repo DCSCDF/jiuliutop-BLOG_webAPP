@@ -124,9 +124,8 @@
 
                         <!-- 右侧面板 -->
                         <div class="w-full md:w-70">
-                            <n-affix :trigger-top="isMobile ? Infinity : affixTriggerTop"
-                                :style="isMobile ? { position: 'static' } : { top: `${headerOffset}px` }"
-                                @change="handleAffixChange">
+                            <n-affix :trigger-top="affixTriggerTop"
+                                :style="isMobile ? { position: 'static' } : { top: `${headerOffset}px` }">
                                 <div ref="rightPanel" class="max-h-[calc(100vh-140px)]" :style="affixStyle">
                                     <About></About>
                                     <n-card :content-style="{ padding: 0 }" style="background-color: color-mix(in oklab, var(--color-white) 60%, transparent); 
@@ -192,37 +191,9 @@ const affixTriggerTop = ref(70)
 const isMobile = ref(false)
 
 
-
 // 响应式移动端判断
 const checkMobile = () => {
     isMobile.value = window.innerWidth < 768 // Tailwind的md断点
-    // 如果是移动端，重置affix状态
-    if (isMobile.value) {
-        affixStyle.value = { width: '100%' }
-    } else if (originalWidth.value > 0) {
-        // 如果是桌面端且已经固定过，恢复固定宽度
-        affixStyle.value = { width: `${originalWidth.value}px` }
-    }
-}
-
-// 处理affix状态变化
-const handleAffixChange = (isFixed) => {
-    // 移动端直接禁止固定
-    if (isMobile.value) {
-        affixStyle.value = { width: '100%' }
-        return false
-    }
-
-    // 桌面端逻辑
-    if (isFixed) {
-        originalWidth.value = rightPanel.value?.offsetWidth || 0
-        affixStyle.value = {
-            width: `${originalWidth.value}px`,
-            transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-        }
-    } else {
-        affixStyle.value = { width: '100%' }
-    }
 }
 
 // 添加窗口resize监听器
@@ -244,18 +215,8 @@ onUnmounted(() => {
     window.removeEventListener('resize', handleResize)
 })
 
-// 添加窗口resize监听器
-onMounted(() => {
-    window.addEventListener('resize', () => {
-        if (originalWidth.value > 0) {
-            affixStyle.value.width = `${originalWidth.value}px`
-        }
-    })
-})
 
-onUnmounted(() => {
-    window.removeEventListener('resize', () => { })
-})
+
 
 // 使用 useCategoryStore 获取 Pinia Store
 const categoryStore = useCategoryStore();
@@ -456,21 +417,7 @@ const retryLoading = () => {
 
 /* 确保在移动端时affix完全禁用 */
 @media (max-width: 768px) {
-    .n-affix {
-        position: static !important;
-        transform: none !important;
-        width: 100% !important;
-    }
-
     .n-affix :deep(.n-affix--fixed) {
-        position: static !important;
-        transform: none !important;
-        width: 100% !important;
-    }
-}
-
-@media (max-width: 768px) {
-    .n-affix {
         position: static !important;
         transform: none !important;
     }

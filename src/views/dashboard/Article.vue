@@ -335,17 +335,41 @@ const handleUploadRemove = () => {
 };
 
 // 修改文章的图片移除处理
-const handleUpdateUploadRemove = () => {
-    // 如果正在上传，取消上传
-    if (uploadController.value) {
-        uploadController.value.abort();
-    }
+const handleUpdateUploadRemove = async () => {
+    try {
+        // 如果正在上传，取消上传
+        if (uploadController.value) {
+            uploadController.value.abort();
+        }
 
-    updateArticle.img_url = null;
-    updateFileList.value = [];
-    updateUploading.value = false;
-    updateProgress.value = 0;
-    message.info("已移除图片");
+        // 如果有旧图片URL，提取文件名并调用删除API
+        if (updateArticle.img_url) {
+            // 从URL中提取文件名
+            const urlParts = updateArticle.img_url.split('/');
+            const filename = urlParts[urlParts.length - 1];
+            console.log(filename)
+            // 调用删除API
+            const res = await axios.delete(`/upload/delete/${filename}`, {
+                headers: uploadHeaders.value
+            });
+
+            if (res.data.errno === 0) {
+                message.success("服务器图片删除成功");
+            } else {
+                message.warning("服务器图片删除失败: " + res.data.message);
+            }
+        }
+
+        // 重置本地状态
+        updateArticle.img_url = null;
+        updateFileList.value = [];
+        updateUploading.value = false;
+        updateProgress.value = 0;
+        message.info("已移除图片");
+    } catch (error) {
+        console.error('删除图片失败:', error);
+        message.error("删除图片时发生错误");
+    }
 };
 
 // 提交状态变量
@@ -591,6 +615,33 @@ const confirmDelete = async () => {
             return;
         }
 
+        // 先获取文章详情，检查是否有封面图片
+        const detailRes = await axios.get("/blog/detail?id=" + currentDeleteBlog.value.id);
+        if (detailRes.data.code !== 200) {
+            message.error("获取文章详情失败");
+            return;
+        }
+
+        const articleDetail = detailRes.data.data;
+
+        // 如果有封面图片，先删除图片
+        if (articleDetail.img_url) {
+            // 从URL中提取文件名
+            const urlParts = articleDetail.img_url.split('/');
+            const filename = urlParts[urlParts.length - 1];
+
+            // 调用删除图片API
+            const deleteImgRes = await axios.delete(`/upload/delete/${filename}`, {
+                headers: uploadHeaders.value
+            });
+
+            if (deleteImgRes.data.errno !== 0) {
+                message.warning("封面图片删除失败: " + deleteImgRes.data.message);
+                // 继续删除文章，不中断流程
+            }
+        }
+
+        // 删除文章
         const res = await axios.delete("/blog/_token/delete?id=" + currentDeleteBlog.value.id);
         if (res.data.code === 200) {
             message.success("删除成功");

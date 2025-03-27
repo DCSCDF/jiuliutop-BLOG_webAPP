@@ -1,19 +1,76 @@
 <template>
-    <n-config-provider>
-        <n-loading-bar-provider>
-            <n-dialog-provider>
-                <n-message-provider>
-                    <router-view />
-                </n-message-provider>
-            </n-dialog-provider>
-        </n-loading-bar-provider>
-    </n-config-provider>
+    <!-- 添加滚动容器 -->
+    <div ref="scrollContainer" class="scroll-container">
+        <n-config-provider>
+            <n-loading-bar-provider>
+                <n-dialog-provider>
+                    <n-message-provider>
+                        <router-view />
+                    </n-message-provider>
+                </n-dialog-provider>
+            </n-loading-bar-provider>
+        </n-config-provider>
+    </div>
 </template>
 
 <script setup>
-//吊毛死去 套nm的娃
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import Scrollbar from 'smooth-scrollbar'
+
+const scrollContainer = ref(null)
+let scrollbar = null
+
+onMounted(() => {
+    // 初始化滚动条
+    if (scrollContainer.value) {
+        scrollbar = Scrollbar.init(scrollContainer.value, {
+            damping: 0.02,    // 阻尼系数 (0~1，越小阻尼越强)
+            thumbMinSize: 20, // 滚动条最小尺寸
+            renderByPixels: true,
+            alwaysShowTracks: false,
+            continuousScrolling: true
+        })
+
+        // 可选：禁用水平滚动
+        scrollbar.track.xAxis.enabled = false
+    }
+})
+
+onBeforeUnmount(() => {
+    if (scrollbar) {
+        scrollbar.destroy()
+    }
+})
 </script>
+
 <style>
+/* 隐藏原生滚动条 */
+.scroll-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 自定义滚动条样式 */
+.scroll-container .scrollbar-track {
+    background: rgba(200, 200, 200, 0.2) !important;
+    border-radius: 4px;
+}
+
+.scroll-container .scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.4) !important;
+    border-radius: 4px;
+}
+
+/* 确保内容元素高度正确 */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
 :root {
     /* 浅色模式变量 */
     --n-item-color: #ffffff;
