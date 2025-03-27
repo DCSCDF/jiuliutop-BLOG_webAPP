@@ -14,15 +14,17 @@
         <template v-else>
             <Header></Header>
             <main class="mb-auto">
-                <div class="container px-6 pt-10 py-2 mx-auto lg:w-6xl">
+                <div class="container px-6 pt-10 py-2 mx-auto duration-150 lg:w-6xl">
                     <div class="items-center lg:flex">
                         <div class="w-full mt-10">
-                            <div class="lg:max-w-xl">
-                                <h1 class="text-3xl font-semibold text-gray-800 dark:text-white lg:text-5xl">Wellcome！
+                            <div class="lg:max-w-xl duration-150">
+                                <h1
+                                    class="text-3xl duration-150 font-semibold text-gray-800 dark:text-white lg:text-5xl">
+                                    Wellcome！
                                     <br>
                                     欢迎来到 {{ settingsData?.webname }}
                                 </h1>
-                                <p class="mt-3 text-wrap lg:mr-10 text-gray-600 dark:text-gray-400">
+                                <p class="mt-3 text-wrap duration-150 lg:mr-10 text-gray-600 dark:text-gray-400">
                                     {{ settingsData?.webcontent }}
                                 </p>
                                 <div class="my-6">
@@ -34,13 +36,14 @@
                         </div>
 
                         <!-- 天气组件 -->
-                        <div class="lg:block w-full lg:w-md flex items-center justify-center mt-6 lg:mt-0 ">
+                        <div
+                            class="lg:block w-full lg:w-md duration-150 flex items-center justify-center mt-6 lg:mt-0 ">
                             <Weather></Weather>
                         </div>
                     </div>
                 </div>
 
-                <n-layout class=" py-4 px-2 md:px-10" style="background-color: rgba(0,0,0,0);">
+                <n-layout class=" py-4 px-2 duration-150 md:px-10" style="background-color: rgba(0,0,0,0);">
                     <div class="container max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
                         <!-- 主内容区 -->
                         <div class="flex-1 space-y-6">
@@ -62,7 +65,7 @@
                                         :content-style="{ padding: 0 }" @click="toDetail(blog)">
                                         <div class="p-5 flex flex-row ">
                                             <!-- 图片区域 -->
-                                            <div class="md:w-50 w-30 h-36 flex-shrink-0 mr-3">
+                                            <div class="lg:w-50 duration-150 w-30 h-36 flex-shrink-0 mr-3">
                                                 <img class="object-cover w-full h-full rounded-md" :src="blog.imageUrl"
                                                     alt="文章封面" />
                                             </div>
@@ -94,6 +97,7 @@
                                     </n-card>
 
 
+
                                 </template>
                             </template>
                             <!-- 分页组件 -->
@@ -123,7 +127,7 @@
                         </div>
 
                         <!-- 右侧面板 -->
-                        <div class="w-full md:w-70">
+                        <div class="w-full duration-150 md:w-70">
                             <n-affix :trigger-top="affixTriggerTop"
                                 :style="isMobile ? { position: 'static' } : { top: `${headerOffset}px` }">
                                 <div ref="rightPanel" class="max-h-[calc(100vh-140px)]" :style="affixStyle">

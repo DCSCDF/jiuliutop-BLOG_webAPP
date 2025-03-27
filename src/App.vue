@@ -1,6 +1,6 @@
 <template>
     <!-- 添加滚动容器 -->
-    <div ref="scrollContainer" class="scroll-container">
+    <div ref="scrollContainer" class="scroll-container duration-100"><!-- 使我的网站旋转 animate-spin -->
         <n-config-provider>
             <n-loading-bar-provider>
                 <n-dialog-provider>
@@ -70,6 +70,8 @@ body {
     width: 100%;
     height: 100%;
 }
+
+
 
 :root {
     /* 浅色模式变量 */

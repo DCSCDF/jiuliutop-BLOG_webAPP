@@ -5,7 +5,6 @@ import axios from 'axios';
 import { createPinia } from 'pinia';
 import naive from 'naive-ui';
 import { createDiscreteApi } from 'naive-ui';
-import themeOverrides from './themeOverrides'; // 引入自定义主题
 import { AdminStore } from './stores/AdminStore';
 import * as echarts from 'echarts'
 import { API } from "./api.js"
@@ -23,14 +22,6 @@ import { fab } from '@fortawesome/free-brands-svg-icons'; // 品牌图标
 library.add(fas, far, fab);
 const { message, notification, dialog } = createDiscreteApi(["message", "notification", "dialog"]);
 
-// 添加请求拦截器
-axios.interceptors.request.use(config => {
-    const token = localStorage.getItem('admin_token')
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-})
 
 // 创建app实例
 const app = createApp(App);
