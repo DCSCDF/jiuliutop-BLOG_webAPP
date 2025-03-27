@@ -157,38 +157,3 @@ onMounted(async () => {
 });
 
 </script>
-
-<style>
-pre {
-    white-space: pre-wrap !important;
-    /* 允许换行 */
-    word-break: break-word !important;
-    /* 允许单词换行 */
-    background: #1f2937 !important;
-    /* 背景颜色 */
-}
-
-code {
-    white-space: pre-wrap !important;
-    /* 允许换行 */
-    word-break: break-word !important;
-    /* 允许单词换行 */
-}
-
-pre {
-    background: #1f2937 !important;
-}
-
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5 {
-    /* color: none !important; */
-    text-decoration: none !important;
-}
-
-.prose p img {
-    display: inline-block !important;
-}
-</style>

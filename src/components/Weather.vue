@@ -55,7 +55,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
 import noAuthAxios from '../utils/noAuthAxios'
 
 const API_KEY = '462d085eca5f4f7487f2afdca4527acb' // 替换为你的和风天气API Key

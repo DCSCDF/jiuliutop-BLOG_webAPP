@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
+
+
+
 // https://vite.dev/config/
 export default defineConfig({
     server: {
@@ -12,7 +15,13 @@ export default defineConfig({
         }
     },
     plugins: [
-        vue(),
+        vue({
+            template: {
+                compilerOptions: {
+                    isCustomElement: (tag) => tag === 'css-doodle',
+                },
+            },
+        }),
         tailwindcss(),
         basicSsl()
     ],

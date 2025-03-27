@@ -9,16 +9,18 @@
                     {{ settingsData?.webname }}
                 </h1>
                 <div class="relative bg-transparent w-auto opacity-100 translate-x-0 flex items-center">
+
+
                     <!-- 桌面端导航 -->
                     <div class="hidden md:flex flex-row items-center mx-8 z-50">
-                        <n-button v-for="(menu, index) in menus" :key="index" @click="topage(menu.href)" quaternary
-                            style="margin: 0px 4px;" :theme-overrides="themeOverrides">
+                        <n-button v-for="(menu, index) in menus" :key="index" @click="handleMenuClick(menu.href)"
+                            quaternary style="margin: 0px 4px;" :theme-overrides="themeOverrides">
                             {{ menu.name }}
                         </n-button>
                         <n-popselect v-if="isHomePage" @update:value="searchByCategory" v-model:value="selectedCategory"
                             :virtual-scroll="true" :options="categoryOptions" trigger="click"
                             :theme-overrides="themeOverrides">
-                            <div class="text-gray-700 dark:text-gray-300 mx-4 text-nowrap flex items-center"
+                            <div class="text-gray-700 dark:text-gray-300 mx-2 text-nowrap flex items-center"
                                 style="cursor: pointer; margin-top: 2px;">
                                 分类列表
                                 <span class="text-xs text-gray-400 ml-1">
@@ -26,11 +28,22 @@
                                 </span>
                             </div>
                         </n-popselect>
+                        <!-- 分割 -->
+                        <!-- <div class="h-4 mr-4 w-[1px] bg-gray-300 dark:bg-slate-800"></div> -->
+                        <div class="mx-2"></div>
+                        <div class="bg-gray-900/5 dark:bg-white/5 rounded-md">
+                            <n-button v-for="(menu, index) in custommenus" :key="index"
+                                @click="handleMenuClick(menu.href)" quaternary>
+                                {{ menu.name }}
+                            </n-button>
+                        </div>
                     </div>
+
+
                     <!-- 移动端展开式菜单 -->
                     <div class="md:hidden flex items-center">
                         <n-dropdown trigger="click" style="width: 200px;" :options="dropdownOptions"
-                            @select="handleDropdownSelect">
+                            @select="handleMenuClick">
                             <n-button quaternary>
                                 <template #icon>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
@@ -42,84 +55,52 @@
                             </n-button>
                         </n-dropdown>
                     </div>
+
+
                 </div>
             </div>
         </div>
     </header>
 
     <!-- 背景图片 -->
-    <div ref="backgroundImage" class="fixed -z-30 top-0 h-full inset-x-0 flex justify-center ">
-
+    <div ref="backgroundImage" class=" will-change-auto fixed -z-10 top-0 h-full inset-x-0 flex justify-center">
         <!-- 添加定位层 -->
         <div class="relative w-full h-full">
-            <css-doodle class="absolute inset-0 w-full h-full" style="filter: blur(120px); opacity: 0.3;">
+            <css-doodle style="filter: blur(90px);">
                 :doodle {
-                @grid: 1x8 / 100%;
-                height: 100%;
+                @grid: 3x2 / 100%;
+                height: 60%;
                 overflow: visible;
-                /* 新增容器级模糊（类iOS毛玻璃效果） */
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
+                will-change: transform, opacity;
                 }
 
-                @place-cell: center;
-                width: @rand(30%, 60%); /* 限制宽度范围 */
-                height: @rand(30%, 60%); /* 限制高度范围 */
-                transform: translate(@rand(-200%, 200%), @rand(-60%, 60%))
-                scale(@rand(.8, 1.8))
-                skew(@rand(45deg));
-
-                /* 新增元素级动态模糊 */
-                filter:
-                blur(@rand(2px, 8px))
-                saturate(@rand(100%, 180%))
-                contrast(@rand(90%, 110%));
-
-                clip-path: polygon(
-                @r(0, 30%) @r(0, 50%),
-                @r(30%, 60%) @r(0%, 30%),
-                @r(60%, 100%) @r(0%, 50%),
-                @r(60%, 100%) @r(50%, 100%),
-                @r(30%, 60%) @r(60%, 100%),
-                @r(0, 30%) @r(60%, 100%)
-                );
-
-                /* 优化后的遮罩系统 */
-                -webkit-mask:
-                linear-gradient(
-                to bottom,
-                rgba(0,0,0,1) 0%,
-                rgba(0,0,0,0) 100%
-                )
                 content-box,
                 linear-gradient(black, black);
                 mask:
                 linear-gradient(
-                to bottom,
                 rgba(0,0,0,1) 0%,
                 rgba(0,0,0,0) 100%
                 )
                 content-box,
                 linear-gradient(black, black);
 
-                /* 增强的色彩系统 */
+                /* 色彩 */
                 background: hsla(
-                @pick(4, 340, 291, 259, 231, 241, 342, 49, 187, 199, 207, 169, 114, 54, 32, 158),
-                @rand(40%, 60%),
-                @rand(50%, 70%),
-                @rand(.5, .8)
+                @pick(200, 169, 342), /* 蓝色、绿色和粉色的色相值 */
+                70%, /* 固定饱和度 */
+                50%, /* 固定亮度 */
+                0.11 /* 固定透明度 */
                 );
 
-                /* 新增动态动画 */
-                animation: float 20s ease-in-out infinite;
-                @keyframes float {
-                50% {
+                /* 动态动画 */
+                animation: float @r(8, 15)s infinite @r(-10, 0)s ease-in-out;
+                @keyframes float { 50% {
                 transform:
-                translate(@rand(-200%, 200%), @rand(-60%, 60%))
-                scale(@rand(0.8, 1.5))
-                rotate(@rand(-15deg, 15deg));
-                }
-                }
+                translate3d(@rn(-300%, 300%), @rn(-60%, 60%), 0)
+                scale(@rn(0.5, 2))
+                rotate(@rn(-30deg, 30deg));
+                opacity: @rand(0.5, 1);
+                } }
             </css-doodle>
         </div>
     </div>
@@ -131,20 +112,19 @@
 import { reactive, ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import themeOverrides from '../themeOverrides'; // 引入自定义主题
 import axios from 'axios';
-import { useCategoryStore } from '../stores/AdminStore'; // 引入 Pinia Store
-import { useRoute } from 'vue-router';
+import { useCategoryStore } from '../stores/AdminStore';
+import { useRoute, useRouter } from 'vue-router';
 import 'css-doodle'
-
 // 添加背景图片引用
 const backgroundImage = ref(null);
 const settingsData = ref(null);
 const loading = ref(true);
 const route = useRoute();
+const router = useRouter();
 const categoryStore = useCategoryStore(); // 使用 Pinia Store
 const header = ref(null);
 const selectedCategory = ref(categoryStore.selectedCategoryId); // 从 Pinia Store 获取初始值
 const categoryOptions = ref([]);
-const blogListInfo = ref([]);
 const lastScrollPosition = ref(0);
 
 // 菜单数据
@@ -153,26 +133,48 @@ const menus = reactive([
     { name: "友情链接", href: "/links" },
     { name: "登陆", href: "/adminlogin" },
     { name: "留言", href: "/guestbook" },
+]);
+// 自定义链接🔗
+const custommenus = reactive([
     { name: "网盘", href: "https://pan.jiuliu.top/" },
     { name: "开往", href: "https://www.travellings.cn/go.html" },
 ]);
 
 // 展开式菜单选项
 const dropdownOptions = computed(() => {
-    return menus.map(menu => ({
+    const mainMenuItems = menus.map(menu => ({
         label: menu.name,
-        key: menu.href
+        key: menu.href,
+        type: 'item'
     }));
+
+    const customMenuItems = custommenus.map(menu => ({
+        label: menu.name,
+        key: menu.href,
+        type: 'item'
+    }));
+
+    // 添加分隔线
+    const divider = {
+        type: 'divider',
+        key: 'divider'
+    };
+
+    return [
+        ...mainMenuItems,
+        divider,
+        ...customMenuItems
+    ];
 });
-
-// 展开式菜单选择事件
-const handleDropdownSelect = (href) => {
-    topage(href);
-};
-
-// 页面跳转函数
-const topage = (path) => {
-    window.location.href = path;
+// 统一处理菜单点击
+const handleMenuClick = (key) => {
+    if (key.startsWith('http')) {
+        // 外部链接在新标签页打开
+        window.open(key, '_blank');
+    } else {
+        // 内部路由导航
+        router.push(key);
+    }
 };
 
 // 计算当前是否在首页
@@ -293,9 +295,9 @@ onMounted(async () => {
 });
 
 // 获取图片 URL
-const getImageUrl = (name) => {
-    return new URL(`../assets/img/${name}`, import.meta.url).href;
-};
+// const getImageUrl = (name) => {
+//     return new URL(`../assets/img/${name}`, import.meta.url).href;
+// };
 </script>
 
 <style scoped>
@@ -321,10 +323,7 @@ header {
         opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.fixed {
-    transition: transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
-    backface-visibility: hidden;
-    perspective: 1000;
-    transform-style: preserve-3d;
+.css-doodle-container {
+    will-change: transform, opacity;
 }
 </style>

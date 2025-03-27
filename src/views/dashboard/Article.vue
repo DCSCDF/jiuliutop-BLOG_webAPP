@@ -1,11 +1,14 @@
 <template>
-    <n-modal v-model:show="showDeleteModal" preset="dialog" title="确认删除" type="error" content="确定要删除这篇文章吗？"
-        positive-text="确认" negative-text="取消" @positive-click="confirmDelete" />
     <div class="w-full bg-white rounded-lg">
         <n-config-provider :theme-overrides="themeOverrides">
             <n-card>
                 <n-tabs v-model:value="tabValue" type="line" animated :destroy-on-hide="false">
                     <n-tab-pane name="list" tab="文章列表">
+
+                        <n-modal v-model:show="showDeleteModal" preset="dialog" title="确认删除" type="error"
+                            content="确定要删除这篇文章吗？" positive-text="确认" negative-text="取消"
+                            @positive-click="confirmDelete" />
+
                         <div v-for="(blog, index) in blogListInfo">
                             <n-card :title="blog.title" class="my-4 ">
                                 <div>
@@ -31,80 +34,133 @@
                                 {{ pageNum }}
                             </n-button>
                         </n-space>
+
                     </n-tab-pane>
+
 
                     <n-tab-pane name="add" tab="添加文章">
                         <n-form class="mt-10">
-                            <n-form-item label="标题：" class="max-w-80">
-                                <n-input v-model:value="addArticle.title" placeholder="输入标题" />
-                            </n-form-item>
-                            <n-form-item label="分类：" class="max-w-80">
-                                <n-select v-model:value="addArticle.categoryId" placeholder="选择分类"
-                                    :options="categoryOptions" />
-                            </n-form-item>
+                            <!-- 上传时隐藏表单内容 -->
+                            <div v-if="!uploading">
+                                <n-form-item label="标题：" class="max-w-80">
+                                    <n-input v-model:value="addArticle.title" placeholder="输入标题" />
+                                </n-form-item>
+                                <n-form-item label="分类：" class="max-w-80">
+                                    <n-select v-model:value="addArticle.categoryId" placeholder="选择分类"
+                                        :options="categoryOptions" />
+                                </n-form-item>
 
-                            <!-- 添加上传图片的按钮 -->
-                            <n-upload ref="uploadRef" :action="uploadUrl" :headers="uploadHeaders"
-                                @finish="handleUploadFinish" :max="1" @exceed="handleExceed"
-                                :before-upload="beforeUpload" accept="image/*">
-                                <n-button>上传图片</n-button>
-                            </n-upload>
+                                <n-form-item label="文章封面：">
+                                    <div class="flex flex-col w-full gap-0">
+                                        <n-upload class="full-cover-upload" :action="uploadUrl" :headers="uploadHeaders"
+                                            :max="1" @change="handleFileSelection" @remove="handleUploadRemove"
+                                            @exceed="handleExceed" :before-upload="beforeUpload" accept="image/*"
+                                            list-type="image-card" :file-list="fileList" :show-preview-button="true"
+                                            :show-remove-button="true" :default-upload="false">
+                                            <template #default>
+                                                选择图片
+                                            </template>
+                                        </n-upload>
+                                    </div>
+                                </n-form-item>
 
-                            <n-form-item label="正文：">
-                                <RichTextEditor class="rich-editor-container" v-model="addArticle.content" />
-                            </n-form-item>
-                            <!-- 在模板中添加确认弹窗 -->
-                            <n-modal v-model:show="showConfirm" preset="dialog" title="确认提交" content="确定要提交这篇文章吗？"
-                                positive-text="确认" negative-text="取消" @positive-click="handleConfirmSubmit" />
+                                <n-form-item label="正文：">
+                                    <RichTextEditor class="rich-editor-container" v-model="addArticle.content" />
+                                </n-form-item>
+                            </div>
 
-                            <!-- 修改提交按钮事件 -->
-                            <n-button @click="showConfirm = true" style="margin-bottom:20px;" color="#6b7281"
-                                :disabled="!addArticle.title.trim() || !addArticle.content">
-                                提交文章
-                            </n-button>
-
-                        </n-form>
-                    </n-tab-pane>
-                    <n-tab-pane name="update" tab="修改文章">
-                        <n-form class="mt-10">
-                            <n-form-item label="修改标题：" class="max-w-80">
-                                <n-input v-model:value="updateArticle.title" placeholder="输入标题" />
-                            </n-form-item>
-                            <n-form-item label="修改分类：" class="max-w-80">
-                                <n-select v-model:value="updateArticle.categoryId" placeholder="选择分类"
-                                    :options="categoryOptions" />
-                            </n-form-item>
-
-                            <!-- 添加修改图片的上传组件 -->
-                            <n-form-item label="修改首页图片：">
-                                <div class="w-2xl flex flex-row flex-wrap">
-                                    <n-upload :action="uploadUrl" :headers="uploadHeaders"
-                                        @finish="handleUpdateUploadFinish" :max="1" @exceed="handleExceed"
-                                        :before-upload="beforeUpload" accept="image/*">
-                                        <n-button>更换图片</n-button>
-                                    </n-upload>
-
-                                    <div v-if="updateArticle.img_url" class="mt-2">
-                                        当前图片：<img :src="updateArticle.img_url"
-                                            class="max-w-80 h-40 object-cover rounded-md mx-4" />
+                            <n-modal v-model:show="showConfirm" preset="dialog" title="确认提交"
+                                :positive-text="isSubmitting ? '提交中...' : '确认'" negative-text="取消"
+                                @positive-click="handleConfirmSubmit"
+                                :positive-button-props="{ loading: isSubmitting, disabled: isSubmitting }"
+                                @after-leave="resetSubmitState">
+                                <template #header>
+                                    <div>确定要提交这篇文章吗？</div>
+                                </template>
+                                <!-- 上传进度显示（仅在上传时显示） -->
+                                <div class="my-6">
+                                    <div v-if="uploading" class="text-center">
+                                        <n-progress :percentage="uploadProgress" />
+                                    </div>
+                                    <div v-if="isSubmitting" class="flex items-center gap-2">
+                                        <span>正在提交，请稍候...</span>
                                     </div>
                                 </div>
-                            </n-form-item>
-                            <n-form-item label="修改文章：">
-                                <RichTextEditor v-model="updateArticle.content" ref="richTextEditorRef" />
-                            </n-form-item>
-                            <!-- 在模板中添加确认弹窗 -->
-                            <n-modal v-model:show="showUpdateModal" preset="dialog" title="确认修改" content="确定要修改这篇文章吗？"
-                                positive-text="确认" negative-text="取消" @positive-click="updateSubmit" />
-                            <!-- 修改修改按钮事件 -->
-                            <n-button @click="showUpdateModal = true" color="#6b7281"
-                                :disabled="!updateArticle.id || !updateArticle.title.trim() || !updateArticle.content">
+                            </n-modal>
+                            <n-button @click="showConfirm = true" style="margin-bottom:20px;" color="#6b7281"
+                                :disabled="!addArticle.title.trim() || !addArticle.content || uploading">
+                                提交文章
+                            </n-button>
+                        </n-form>
+                    </n-tab-pane>
+
+
+                    <n-tab-pane name="update" tab="修改文章">
+                        <div v-if="!updateArticle.id" class="text-center py-10">
+                            <n-result status="404" title="文章未获取" description="请从文章列表中选择要修改的文章">
+                                <template #footer>
+                                    <n-button @click="tabValue = 'list'">返回文章列表</n-button>
+                                </template>
+                            </n-result>
+                        </div>
+
+                        <n-form v-else class="mt-10">
+                            <!-- 上传时隐藏表单内容 -->
+                            <div v-if="!updateUploading">
+                                <n-form-item label="修改标题：" class="max-w-80">
+                                    <n-input v-model:value="updateArticle.title" placeholder="输入标题" />
+                                </n-form-item>
+                                <n-form-item label="修改分类：" class="max-w-80">
+                                    <n-select v-model:value="updateArticle.categoryId" placeholder="选择分类"
+                                        :options="categoryOptions" />
+                                </n-form-item>
+
+                                <n-form-item label="修改文章封面：">
+                                    <div class="flex flex-col w-full gap-0">
+                                        <n-upload class="full-cover-upload" :action="uploadUrl" :headers="uploadHeaders"
+                                            :max="1" @change="handleUpdateFileSelection"
+                                            @remove="handleUpdateUploadRemove" @exceed="handleExceed"
+                                            :before-upload="beforeUpload" accept="image/*" list-type="image-card"
+                                            :file-list="updateFileList" :show-preview-button="true"
+                                            :show-remove-button="true" :default-upload="false">
+                                            <template #default>
+                                                选择图片
+                                            </template>
+                                        </n-upload>
+                                    </div>
+                                </n-form-item>
+
+                                <n-form-item label="修改正文：">
+                                    <RichTextEditor class="rich-editor-container" v-model="updateArticle.content" />
+                                </n-form-item>
+                            </div>
+
+                            <n-modal v-model:show="showUpdateConfirm" preset="dialog" title="确认修改"
+                                :positive-text="isUpdating ? '提交中...' : '确认'" negative-text="取消"
+                                @positive-click="handleConfirmUpdate"
+                                :positive-button-props="{ loading: isUpdating, disabled: isUpdating }"
+                                @after-leave="resetUpdateState">
+                                <template #header>
+                                    <div>确定要修改这篇文章吗？</div>
+                                </template>
+                                <!-- 上传进度显示（仅在上传时显示） -->
+                                <div class="my-6">
+                                    <div v-if="updateUploading" class="text-center">
+                                        <n-progress :percentage="updateProgress" />
+                                    </div>
+                                    <div v-if="isUpdating" class="flex items-center gap-2">
+                                        <span>正在提交修改，请稍候...</span>
+                                    </div>
+                                </div>
+                            </n-modal>
+                            <n-button @click="showUpdateConfirm = true" style="margin-bottom:20px;" color="#6b7281"
+                                :disabled="!updateArticle.title.trim() || !updateArticle.content || updateUploading">
                                 修改文章
                             </n-button>
-
                         </n-form>
-                        <!-- {{ updateArticle.content }} -->
                     </n-tab-pane>
+
+
                 </n-tabs>
             </n-card>
         </n-config-provider>
@@ -118,19 +174,30 @@ import RichTextEditor from '../../components/RichTextEditor.vue';
 import themeOverrides from '../../themeOverrides';
 import { ref, reactive, onMounted, inject, nextTick, shallowRef, watch } from "vue";
 import { AdminStore } from '../../stores/AdminStore';
-import Category from './Category.vue';
 import axios from 'axios';
+
+// 文件列表响应式变量
+const fileList = ref([]);
+const updateFileList = ref([]);
+
+const uploading = ref(false);
+const updateUploading = ref(false);
+const uploadProgress = ref(0);
+const updateProgress = ref(0);
+const uploadController = ref(null); // 用于取消上传
+
 // 创建上传请求头（响应式）
 const adminStore = AdminStore();
 const uploadHeaders = ref({
     Authorization: `Bearer ${adminStore.token}`
 });
-/* console.log('当前Token:', adminStore.token); */
+
 // 监听 token 变化更新请求头
 watch(() => adminStore.token, (newToken) => {
     uploadHeaders.value.Authorization = `Bearer ${newToken}`;
 });
-// 添加beforeUpload校验函数
+
+// beforeUpload校验函数
 const beforeUpload = ({ file }) => {
     // 允许的图片类型
     const allowedTypes = [
@@ -191,7 +258,6 @@ const pageInfo = reactive({
     pageCount: 0,
     count: 0
 })
-/* console.log(pageInfo.page) */
 
 onMounted(() => {
     loadCategorys()
@@ -227,163 +293,255 @@ const loadCategorys = async () => {
             value: item.id
         }))
     ];
-    /* console.log(categoryOptions.value) */ //查看分类数组 
 }
 
-const showConfirm = ref(false)
-const handleUploadFinish = (options) => {
-    try {
-        // console.log('完整上传事件参数:', options); // 调试关键
+// 文章的文件选择处理函数
+const handleFileSelection = (data) => {
+    const { file, fileList: newFileList } = data;
+    fileList.value = newFileList;
 
-        // 1. 从事件参数中直接提取响应数据
-        const { file, event } = options; // 解构参数
-
-        // 2. 从 XMLHttpRequest 对象获取响应
-        const responseText = event?.target?.responseText;
-        if (!responseText) {
-            throw new Error('服务器响应数据为空');
-        }
-
-        // 3. 手动解析 JSON
-        const responseData = JSON.parse(responseText);
-        console.log('解析后的响应数据:', responseData);
-
-        // 4. 验证数据结构
-        if (typeof responseData.errno !== 'number' || !responseData.data?.url) {
-            throw new Error('服务器响应结构异常');
-        }
-
-        // 5. 处理成功逻辑
-        if (responseData.errno === 0) {
-            addArticle.img_url = responseData.data.url;
-            message.success("图片上传成功！");
-            console.log('图片路径已更新:', addArticle.img_url);
-        } else {
-            message.error(`上传失败，错误码: ${responseData.errno}`);
-        }
-    } catch (error) {
-        console.error('上传处理失败:', error);
-        message.error(error.message || "图片上传处理异常");
+    // 仅更新文件列表，暂不上传
+    if (file.status === 'pending') {
+        file.status = 'waiting'; // 自定义状态表示尚未上传
     }
-    return file;
 };
 
-const uploadRef = ref(null); // 声明 uploadRef
+// 修改文章的文件选择处理函数
+const handleUpdateFileSelection = (data) => {
+    const { file, fileList: newFileList } = data;
+    updateFileList.value = newFileList;
+
+    // 仅更新文件列表，暂不上传
+    if (file.status === 'pending') {
+        file.status = 'waiting'; // 自定义状态表示尚未上传
+    }
+};
+
+const showConfirm = ref(false)
+const showUpdateConfirm = ref(false)
+
+// 文章的图片移除处理
+const handleUploadRemove = () => {
+    // 如果正在上传，取消上传
+    if (uploadController.value) {
+        uploadController.value.abort();
+    }
+
+    addArticle.img_url = null;
+    fileList.value = [];
+    uploading.value = false;
+    uploadProgress.value = 0;
+    message.info("已移除图片");
+};
+
+// 修改文章的图片移除处理
+const handleUpdateUploadRemove = () => {
+    // 如果正在上传，取消上传
+    if (uploadController.value) {
+        uploadController.value.abort();
+    }
+
+    updateArticle.img_url = null;
+    updateFileList.value = [];
+    updateUploading.value = false;
+    updateProgress.value = 0;
+    message.info("已移除图片");
+};
+
+// 提交状态变量
+const isSubmitting = ref(false);
+const isUpdating = ref(false);
+
+// 文章确认提交处理函数
 const handleConfirmSubmit = async () => {
+    // 防止重复提交
+    if (isSubmitting.value) return;
+
     try {
+        isSubmitting.value = true;
+        uploading.value = true;
+        uploadProgress.value = 0;
+
+        // 1. 先上传图片（如果有）
+        if (fileList.value.length > 0 && fileList.value[0].status !== 'finished') {
+            const file = fileList.value[0];
+
+            const formData = new FormData();
+            formData.append('file', file.file);
+
+            const uploadResponse = await axios.post(uploadUrl, formData, {
+                headers: {
+                    ...uploadHeaders.value,
+                    'Content-Type': 'multipart/form-data'
+                },
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        uploadProgress.value = Math.round(
+                            (progressEvent.loaded * 50) / progressEvent.total
+                        );
+                    }
+                }
+            });
+
+            if (uploadResponse.data.errno === 0) {
+                addArticle.img_url = uploadResponse.data.data.url;
+                file.status = 'finished';
+                file.url = uploadResponse.data.data.url;
+            } else {
+                throw new Error(uploadResponse.data.message || '图片上传失败');
+            }
+        }
+
+        uploadProgress.value = 75;
+
+        // 提交文章数据
         const postData = {
             categoryId: addArticle.categoryId || null,
             title: addArticle.title,
             content: addArticle.content,
-            img_url: addArticle.img_url,
+            img_url: addArticle.img_url || null,
         };
 
         const res = await axios.post('/blog/_token/add', postData);
 
         if (res.data.code === 200) {
+            uploadProgress.value = 100;
             message.success('提交成功！');
-
-            // === 新增核心代码 ===
-            pageInfo.page = 1; // 重置到第一页
-            await loadBlogs(); // 强制刷新列表
-            await nextTick();  // 等待数据加载完成
-            // ==================
-
-            // 清空表单
-            addArticle.title = '';
-            addArticle.content = '';
-            addArticle.categoryId = null;
-            addArticle.img_url = null;
-
-            if (uploadRef.value) {
-                uploadRef.value.clear();
-            }
-
-            // 延迟切换确保DOM更新
-            setTimeout(() => {
-                tabValue.value = 'list';
-            }, 50);
+            resetAddForm();
+            tabValue.value = "list";
+            loadBlogs();
+        } else {
+            throw new Error(res.data.message || '文章提交失败');
         }
     } catch (error) {
         console.error('提交失败:', error);
-        message.error('服务器异常');
+        message.error(error.message || '服务器异常');
+    } finally {
+        // 立即关闭弹窗
+        showConfirm.value = false;
+        // 延迟重置状态以避免UI闪烁
+        setTimeout(() => {
+            isSubmitting.value = false;
+            uploading.value = false;
+            uploadProgress.value = 0;
+        }, 300);
     }
 };
+
+// 修改文章确认提交处理函数
+const handleConfirmUpdate = async () => {
+    // 防止重复提交
+    if (isUpdating.value) return;
+
+    try {
+        isUpdating.value = true;
+        updateUploading.value = true;
+        updateProgress.value = 0;
+
+        // 先上传图片（如果有）
+        if (updateFileList.value.length > 0 && updateFileList.value[0].status !== 'finished') {
+            const file = updateFileList.value[0];
+
+            const formData = new FormData();
+            formData.append('file', file.file);
+
+            const uploadResponse = await axios.post(uploadUrl, formData, {
+                headers: {
+                    ...uploadHeaders.value,
+                    'Content-Type': 'multipart/form-data'
+                },
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        updateProgress.value = Math.round(
+                            (progressEvent.loaded * 50) / progressEvent.total
+                        );
+                    }
+                }
+            });
+
+            if (uploadResponse.data.errno === 0) {
+                updateArticle.img_url = uploadResponse.data.data.url;
+                file.status = 'finished';
+                file.url = uploadResponse.data.data.url;
+            } else {
+                throw new Error(uploadResponse.data.message || '图片上传失败');
+            }
+        }
+
+        updateProgress.value = 75;
+
+        // 提交文章数据
+        const postData = {
+            id: updateArticle.id,
+            categoryId: updateArticle.categoryId || null,
+            title: updateArticle.title,
+            content: updateArticle.content,
+            img_url: updateArticle.img_url || null,
+        };
+
+        const res = await axios.put('/blog/_token/update', postData);
+
+        if (res.data.code === 200) {
+            updateProgress.value = 100;
+            message.success('修改成功！');
+            resetUpdateForm();
+            tabValue.value = "list";
+            loadBlogs();
+        } else {
+            throw new Error(res.data.message || '文章修改失败');
+        }
+    } catch (error) {
+        console.error('修改失败:', error);
+        message.error(error.message || '服务器异常');
+    } finally {
+        // 立即关闭弹窗
+        showUpdateConfirm.value = false;
+        // 延迟重置状态以避免UI闪烁
+        setTimeout(() => {
+            isUpdating.value = false;
+            updateUploading.value = false;
+            updateProgress.value = 0;
+        }, 300);
+    }
+};
+
+const resetSubmitState = () => {
+    isSubmitting.value = false;
+    uploading.value = false;
+    uploadProgress.value = 0;
+};
+
+const resetUpdateState = () => {
+    isUpdating.value = false;
+    updateUploading.value = false;
+    updateProgress.value = 0;
+};
+
+// 重置表单函数
+const resetAddForm = () => {
+    addArticle.title = '';
+    addArticle.content = '';
+    addArticle.categoryId = null;
+    addArticle.img_url = null;
+    fileList.value = [];
+};
+
+// 修改文章重置表单函数
+const resetUpdateForm = () => {
+    updateArticle.id = 0;
+    updateArticle.title = '';
+    updateArticle.content = '';
+    updateArticle.categoryId = null;
+    updateArticle.img_url = null;
+    updateFileList.value = [];
+};
+
 const toPage = async (pageNum) => {
     pageInfo.page = pageNum
     loadBlogs()
 }
-const showUpdateModal = ref(false); // 控制修改弹窗的显示状态
-const update = ref(false) // 控制修改弹窗显示状态
 
-/* 
-留着检查用 请勿启用
-const toUpdate = async (blog) => {
-    try {
-        tabValue.value = "update";
-        const res = await axios.get("/blog/detail?id=" + blog.id);
-        if (res.data.code === 200) {
-        } else {
-            message.error("获取文章失败");
-            updateArticle.id = null; // 重置ID
-        }
-    } catch (error) {
-        updateArticle.id = null; // 异常时重置ID
-        message.error("服务器异常");
-    }
-}
- */
-const handleUpdateUploadFinish = (options) => {
-    try {
-        console.log('修改图片上传事件参数:', options);
-
-        // 1. 解构事件参数
-        const { file, event } = options;
-
-        // 2. 获取原生响应数据
-        const responseText = event?.target?.responseText;
-        if (!responseText) {
-            throw new Error('服务器未返回响应内容');
-        }
-
-        // 3. 解析JSON数据
-        const responseData = JSON.parse(responseText);
-        console.log('修改图片响应数据:', responseData);
-
-        // 4. 验证数据结构
-        if (typeof responseData.errno !== 'number' || !responseData.data?.url) {
-            throw new Error(`无效的响应结构: ${JSON.stringify(responseData)}`);
-        }
-
-        // 5. 处理业务逻辑
-        if (responseData.errno === 0) {
-            updateArticle.img_url = responseData.data.url;
-            message.success("封面图更新成功！");
-            console.log('新封面URL:', updateArticle.img_url);
-        } else {
-            message.error(`封面更新失败 CODE: ${responseData.errno}`);
-        }
-    } catch (error) {
-        console.error('封面更新失败:', error);
-        message.error(`封面图处理失败: ${error.message}`);
-    }
-    return file;
-};
-
-// 新增对tabValue的监听
-watch(tabValue, (newVal) => {
-    if (newVal === "update") {
-        if (!updateArticle.id) {
-            message.error("未选择有效文章");
-            // 可能需要延迟切换回列表，避免直接修改tabValue导致的问题
-            setTimeout(() => {
-                tabValue.value = "list";
-            }, 0);
-        }
-    }
-});
-
-// 修改获取文章详情的函数
+// 获取文章详情的函数
 const toUpdate = async (blog) => {
     try {
         if (!blog?.id) {
@@ -393,7 +551,20 @@ const toUpdate = async (blog) => {
 
         const res = await axios.get("/blog/detail?id=" + blog.id);
         if (res.data.code === 200) {
-            // 先赋值数据
+            // 重置文件列表
+            updateFileList.value = [];
+
+            // 如果有封面图片，添加到文件列表
+            if (res.data.data.img_url) {
+                updateFileList.value = [{
+                    id: 'current',
+                    name: '当前封面',
+                    status: 'finished',
+                    url: res.data.data.img_url
+                }];
+            }
+
+            // 赋值数据
             Object.assign(updateArticle, {
                 id: blog.id,
                 title: res.data.data.title,
@@ -401,12 +572,9 @@ const toUpdate = async (blog) => {
                 categoryId: res.data.data.category_id,
                 img_url: res.data.data.img_url
             });
-            await nextTick(); // 等待DOM更新
+
             // 数据赋值完成后再切换标签页
             tabValue.value = "update";
-
-            await nextTick();
-
         } else {
             message.error("获取文章失败");
         }
@@ -416,33 +584,6 @@ const toUpdate = async (blog) => {
     }
 };
 
-// 修改提交函数
-const updateSubmit = async () => {
-    if (!updateArticle.id) {
-        message.error("无效的文章ID")
-        return
-    }
-    try {
-        const postData = {
-            id: updateArticle.id,
-            categoryId: updateArticle.categoryId || null,
-            title: updateArticle.title.trim(),
-            content: updateArticle.content,
-            img_url: updateArticle.img_url  // 新增图片路径参数
-        }
-
-        const res = await axios.put("/blog/_token/update", postData);
-        if (res.data.code === 200) {
-            message.success("修改成功！");
-            tabValue.value = "list"
-            update.value = false;
-            loadBlogs();
-        }
-    } catch (error) {
-        console.error('修改失败:', error);
-        message.error("服务器异常");
-    }
-}
 const confirmDelete = async () => {
     try {
         if (!currentDeleteBlog.value?.id) {
@@ -464,8 +605,9 @@ const confirmDelete = async () => {
     }
 }
 
-
 </script>
+
+
 <style scoped>
 .card-tabs .n-tabs-nav--bar-type {
     padding-left: 4px;
@@ -499,5 +641,66 @@ const confirmDelete = async () => {
 :deep(.rich-editor-container .w-e-bar-item button) {
     opacity: 1 !important;
     cursor: pointer !important;
+}
+
+.upload-preview {
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: 1px dashed #d9d9d9;
+}
+
+:deep(.n-upload-file-list.n-upload-file-list--grid) {
+    grid-template-columns: none !important;
+}
+
+/* 核心样式 - 完全填满且不变形 */
+.full-cover-upload :deep(.n-upload-file-list) {
+    min-width: 300px;
+    width: 40% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.full-cover-upload :deep(.n-upload-file--image-card-type) {
+    min-width: 300px;
+    height: 100% !important;
+    margin: 0 !important;
+    border: none !important;
+    background: rgb(250, 250, 252);
+}
+
+.full-cover-upload :deep(.n-upload-file-info__thumbnail) {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+.full-cover-upload :deep(.n-image) {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+}
+
+.full-cover-upload :deep(.n-image img) {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    /* 关键：保持比例不变形 */
+    border-radius: 0 !important;
+}
+
+/* 操作按钮调整 */
+.full-cover-upload :deep(.n-upload-file-info__action) {
+    top: 8px;
+    right: 8px;
+}
+
+/* 触发区域样式 */
+.full-cover-upload :deep(.n-upload-trigger) {
+    width: 100%;
+    aspect-ratio: 16/9;
+    /* 保持触发区域比例 */
 }
 </style>
