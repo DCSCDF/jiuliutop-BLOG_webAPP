@@ -2,18 +2,18 @@
 <template>
     <div class="flex items-center gap-2 flex-row ml-3">
         <!-- 胶囊样式容器 -->
-        <div class="inline-flex bg-gray-200 dark:bg-gray-700 p-1 rounded-full">
+        <div class="inline-flex bg-gray-400/20 dark:bg-gray-700 rounded-md">
             <!-- 左侧主题切换按钮 -->
             <button @click="toggleTheme" :disabled="followSystem" :class="[
-                'pl-2 pr-1 py-1 transition-colors text-nowrap rounded-l-full',
-                followSystem ? 'bg-gray-300 text-gray-500 cursor-not-allowed' :
-                    isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
+                'pl-2 pr-1 py-1 transition-colors text-nowrap  rounded-l-md',
+                followSystem ? 'bg-gray-300/50 text-gray-500 cursor-not-allowed' :
+                    isDark ? 'bg-gray-800/50 text-white' : 'bg-white/30 text-gray-800'
             ]">
                 {{ isDark ? '浅色' : '深色' }}
             </button>
             <!-- 右侧系统跟随切换 -->
-            <button @click="toggleSystemFollow" class="pl-1 pr-2 py-1 transition-colors text-nowrap rounded-r-full"
-                :class="followSystem ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-800'">
+            <button @click="toggleSystemFollow" class="pl-1 pr-2 py-1 transition-colors text-nowrap rounded-r-md"
+                :class="followSystem ? 'bg-blue-500/50 text-white' : 'bg-gray-300/30 text-gray-800'">
                 {{ followSystem ? '系统' : '手动' }}
             </button>
         </div>

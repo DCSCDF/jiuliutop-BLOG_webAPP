@@ -110,7 +110,8 @@
             bg-gradient-to-tr from-[rgba(255,182,193,0.5)] via-[rgba(173,216,230,0.5)] 
             to-[rgba(221,160,221,0.5)] from-30% via-50% to-70%
             
-            dark:bg-gradient-to-tr dark:from-[rgba(70,40,90,0.5)] dark:via-[rgba(45,85,120,0.5)] dark:to-[rgba(90,50,90,0.5)] 
+            dark:bg-gradient-to-tr dark:from-[rgba(70,40,90,0.5)] dark:via-[rgba(45,85,120,0.5)]
+            dark:to-[rgba(90,50,90,0.5)] 
             dark:from-30% dark:via-50% dark:to-70%
             ">
         </div>
@@ -215,7 +216,6 @@ const handleScroll = () => {
     }
 
     lastScrollPosition.value = currentScrollPosition;
-
 
 
     // 视差效果调整

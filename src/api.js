@@ -1,26 +1,37 @@
-// 评论组件的js
-const commentscripturl = "https://cdn.jsdelivr.net/npm/twikoo@1.6.7/dist/twikoo.all.min.js"
-// 评论API地址
-const commentapi = "https://discuss.jiuliu.top/"
-//后端API地址
-const APIURL = "https://api.jiuliu.top"
-
-
-export const API = {
-    //后端地址
-    Url: APIURL
+// 从环境变量获取配置
+const commentConfig = {
+    scriptUrl: import.meta.env.VITE_COMMENT_SCRIPT_URL,
+    apiEndpoint: import.meta.env.VITE_COMMENT_API_ENDPOINT
 }
-export const commentConfig = {
-    scriptUrl: commentscripturl,
-    apiEndpoint: commentapi
+
+const API = {
+    Url: import.meta.env.VITE_API_BASE_URL
 }
+
+// 开发环境配置验证
+if (import.meta.env.DEV) {
+    const requiredVars = [
+        'VITE_COMMENT_SCRIPT_URL',
+        'VITE_COMMENT_API_ENDPOINT',
+        'VITE_API_BASE_URL'
+    ]
+
+    requiredVars.forEach(varName => {
+        if (!import.meta.env[varName]) {
+            console.error(`缺少环境变量: ${varName}`)
+        }
+    })
+}
+
+export { API, commentConfig }
+
 export const setupComment = (elementId, blogId) => {
     // 动态加载twikoo CDN
     const loadTwikoo = () => new Promise((resolve, reject) => {
         if (window.twikoo) return resolve();
 
         const script = document.createElement('script');
-        script.src = commentscripturl;
+        script.src = commentConfig.scriptUrl;
         script.onload = resolve;
         script.onerror = reject;
         document.head.appendChild(script);
@@ -31,7 +42,7 @@ export const setupComment = (elementId, blogId) => {
         try {
             await loadTwikoo();
             twikoo.init({
-                envId: commentapi,
+                envId: commentConfig.apiEndpoint,
                 el: `#${elementId}`,
                 path: blogId
             });
@@ -75,6 +86,6 @@ export const setupCommentSystem = async (elementId, blogId) => {
         };
     } catch (err) {
         console.error('[评论系统] 初始化失败:', err);
-        throw err; // 抛出错误供外部处理
+        throw err;
     }
 };

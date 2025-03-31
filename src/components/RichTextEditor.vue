@@ -16,13 +16,18 @@ import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
 import hljs from 'highlight.js';
 import javascript from 'highlight.js/lib/languages/javascript';
 import Compressor from 'compressorjs';
-// 统一配置
+
+// LSKY_CONFIG
 const LSKY_CONFIG = {
-    baseUrl: 'https://img.jiuliu.top/api/v1',
-    email: '3209174373@qq.com',
-    password: 'q1012414217'
+    baseUrl: import.meta.env.VITE_LSKY_BASE_URL,
+    email: import.meta.env.VITE_LSKY_EMAIL,
+    password: import.meta.env.VITE_LSKY_PASSWORD
 }
 
+// 添加环境变量验证
+if (import.meta.env.DEV && (!LSKY_CONFIG.baseUrl || !LSKY_CONFIG.email || !LSKY_CONFIG.password)) {
+    console.error('兰空图床配置缺失！请检查.env文件')
+}
 // 初始化
 hljs.registerLanguage('javascript', javascript);
 const server_url = inject('server_url');
