@@ -51,6 +51,16 @@
 </script>
 
 <style>
+.mask-gradient {
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+}
+
+.dark .mask-gradient {
+    -webkit-mask-image: linear-gradient(to bottom, rgb(0, 0, 0), rgba(0, 0, 0, 0));
+    mask-image: linear-gradient(to bottom, rgb(0, 0, 0), rgba(0, 0, 0, 0));
+}
+
 /* 隐藏原生滚动条 */
 /* .scroll-container {
     width: 100vw;
@@ -96,6 +106,10 @@
 }
 
 :root {
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     /* 浅色模式变量 */
     --n-item-color: #ffffff;
     --n-item-color-hover: #f3f3f3;
@@ -439,8 +453,6 @@ header {
 .dark .n-input__input-el {
     color: white !important;
 }
-
-
 
 pre {
     white-space: pre-wrap !important;

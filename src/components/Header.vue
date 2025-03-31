@@ -1,6 +1,6 @@
 <template>
     <header ref="header"
-        class="sticky top-0 z-30 w-full backdrop-blur-xl flex-none transition-transform duration-500 border-b border-slate-900/10 dark:border-slate-50/[0.06] bg-white/60 dark:bg-gray-900/60">
+        class="sticky top-0 z-30 w-full backdrop-blur-xl flex-none transition-transform duration-500 border-b border-slate-900/10 dark:border-slate-50/[0.06] bg-white/30 dark:bg-gray-900/30">
         <div id="errorPopupContainer"></div>
         <div class="lg:w-6xl container px-6 py-2 mx-auto">
             <div class="flex items-center justify-between">
@@ -64,7 +64,7 @@
 
     <!-- 背景图片 -->
     <div ref="backgroundImage" class=" will-change-auto fixed -z-10 top-0 h-full inset-x-0 flex justify-center">
-        <!-- 添加定位层 -->
+        <!-- 添加定位层
         <div class="relative w-full h-full">
             <css-doodle style="filter: blur(90px);">
                 :doodle {
@@ -102,7 +102,19 @@
                 opacity: @rand(0.5, 1);
                 } }
             </css-doodle>
+        </div> -->
+
+        <!-- 动态背景 -->
+        <div class="fixed inset-0 
+            bg-[length:200%_200%] animate-gradient mask-gradient 
+            bg-gradient-to-tr from-[rgba(255,182,193,0.5)] via-[rgba(173,216,230,0.5)] 
+            to-[rgba(221,160,221,0.5)] from-30% via-50% to-70%
+            
+            dark:bg-gradient-to-tr dark:from-[rgba(70,40,90,0.5)] dark:via-[rgba(45,85,120,0.5)] dark:to-[rgba(90,50,90,0.5)] 
+            dark:from-30% dark:via-50% dark:to-70%
+            ">
         </div>
+
     </div>
 
 </template>
