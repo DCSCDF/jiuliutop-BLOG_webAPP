@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col min-h-screen">
+    <div class="flex flex-col min-h-screen ">
         <!-- 加载动画 -->
         <LoadingSpinner v-if="isLoading" />
         <!-- 错误提示 -->

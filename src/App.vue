@@ -14,64 +14,83 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import Scrollbar from 'smooth-scrollbar'
+// import { ref, onMounted, onBeforeUnmount } from 'vue'
+// import Scrollbar from 'smooth-scrollbar'
 
-const scrollContainer = ref(null)
-let scrollbar = null
+// const scrollContainer = ref(null)
+// let scrollbar = null
 
-onMounted(() => {
-    // 初始化滚动条
-    if (scrollContainer.value) {
-        scrollbar = Scrollbar.init(scrollContainer.value, {
-            damping: 0.02,    // 阻尼系数 (0~1，越小阻尼越强)
-            thumbMinSize: 20, // 滚动条最小尺寸
-            renderByPixels: true,
-            alwaysShowTracks: false,
-            continuousScrolling: true
-        })
+// onMounted(() => {
+//     // 初始化滚动条
+//     if (scrollContainer.value) {
+//         scrollbar = Scrollbar.init(scrollContainer.value, {
+//             damping: 0.02,    // 阻尼系数 (0~1，越小阻尼越强)
+//             thumbMinSize: 20, // 滚动条最小尺寸
+//             renderByPixels: true,
+//             alwaysShowTracks: false,
+//             continuousScrolling: true,
+//             plugins: {
+//                 exclude: ['.child-scroll-area'] // 指定排除的选择器
+//             }
+//         })
 
-        // 可选：禁用水平滚动
-        scrollbar.track.xAxis.enabled = false
-    }
-})
+//         // 可选：禁用水平滚动
+//         scrollbar.track.xAxis.enabled = false
+//     }
+// })
 
-onBeforeUnmount(() => {
-    if (scrollbar) {
-        scrollbar.destroy()
-    }
-})
+
+// onBeforeUnmount(() => {
+//     if (scrollbar) {
+//         scrollbar.destroy()
+//     }
+// })                            
 </script>
 
 <style>
 /* 隐藏原生滚动条 */
-.scroll-container {
+/* .scroll-container {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-}
+} */
 
 /* 自定义滚动条样式 */
-.scroll-container .scrollbar-track {
+/* .scroll-container .scrollbar-track {
     background: rgba(200, 200, 200, 0.2) !important;
     border-radius: 4px;
+} */
+
+/* .scroll-container .scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.4) !important;
+    border-radius: 4px;
+} */
+/* 滚动条整体宽度 */
+::-webkit-scrollbar {
+    width: 8px;
+    /* 垂直滚动条宽度 */
+    height: 8px;
+    /* 水平滚动条高度 */
 }
 
-.scroll-container .scrollbar-thumb {
-    background: rgba(100, 100, 100, 0.4) !important;
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+    background: #f1f1f100;
+    /* 轨道背景色 */
     border-radius: 4px;
 }
 
-/* 确保内容元素高度正确 */
-html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+    background: #4545451e;
+    /* 滑块颜色 */
+    border-radius: 4px;
 }
 
-
+/* 滑块悬停效果 */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
 
 :root {
     /* 浅色模式变量 */
@@ -95,6 +114,18 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+    ::-webkit-scrollbar-thumb {
+        background: #ffffff36;
+        /* 滑块颜色 */
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #c9c9c91e;
+        /* 滑块颜色 */
+        border-radius: 4px;
+    }
+
     :root {
         /* 深色模式变量 */
         --n-item-color: rgba(255, 255, 255, 0.04);

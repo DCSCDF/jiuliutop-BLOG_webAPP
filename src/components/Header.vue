@@ -109,7 +109,7 @@
 
 
 <script setup>
-import { reactive, ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { reactive, ref, onMounted, onBeforeUnmount, computed, watch, watchEffect } from 'vue';
 import themeOverrides from '../themeOverrides'; // 引入自定义主题
 import axios from 'axios';
 import { useCategoryStore } from '../stores/AdminStore';
