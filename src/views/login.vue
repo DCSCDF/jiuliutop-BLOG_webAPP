@@ -209,45 +209,43 @@ defineExpose({
     width: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
 
-    :deep(.n-input .n-input__input-el,
-        .n-input .n-input__textarea-el) {
-        color: var(--color-white) !important;
-    }
+.dark :deep(.n-input .n-input__input-el,
+    .n-input .n-input__textarea-el) {
+    color: var(--color-white) !important;
+}
 
-    .n-button {
-        width: 100%;
-        border-color: rgba(255, 255, 255, 0.131) !important;
-        color: var(--color-white);
-    }
+.dark .n-button {
+    width: 100%;
+    border-color: rgba(255, 255, 255, 0.131) !important;
+    color: var(--color-white);
+}
 
-    .n-card {
-        background-color: color-mix(in oklab, var(--color-white) 0%, transparent) !important;
-        border-color: rgba(255, 255, 255, 0.131) !important;
-        margin-bottom: 16px !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        border-radius: 0.5rem !important;
-        cursor: pointer !important;
+.dark .n-card {
+    background-color: color-mix(in oklab, var(--color-white) 0%, transparent) !important;
+    border-color: rgba(255, 255, 255, 0.131) !important;
+    margin-bottom: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0.5rem !important;
+    cursor: pointer !important;
 
-    }
+}
 
-    .n-tag {
-        background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
-        color: rgb(145, 154, 161);
-    }
+.dark .n-tag {
+    background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
+    color: rgb(145, 154, 161);
+}
 
-    .n-input {
-        background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
-    }
+.dark .n-input {
+    background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
+}
 
-    :deep(.n-form-item-label__text) {
-        color: aliceblue !important;
-    }
+.dark :deep(.n-form-item-label__text) {
+    color: aliceblue !important;
+}
 
-    :deep(.n-checkbox__label) {
-        color: aliceblue !important;
-    }
+.dark :deep(.n-checkbox__label) {
+    color: aliceblue !important;
 }
 </style>

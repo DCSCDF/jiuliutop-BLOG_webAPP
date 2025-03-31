@@ -19,7 +19,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.7.2",
         "@fortawesome/vue-fontawesome": "^3.0.8",
         "@highlightjs/vue-plugin": "^2.1.0",
-        "@tailwindcss/vite": "^4.0.7",
+        "@tailwindcss/vite": "^4.0.17",
         "@types/three": "^0.173.0",
         "@vicons/ionicons5": "^0.13.0",
         "@vicons/utils": "^0.1.4",
@@ -43,7 +43,6 @@
         "shiki": "^3.2.1",
         "smooth-scrollbar": "^8.8.4",
         "stickyfill": "^1.1.1-strict",
-        "tailwindcss": "^4.0.7",
         "three": "^0.173.0",
         "vue": "^3.5.13",
         "vue-router": "^4.5.0",
@@ -54,11 +53,12 @@
         "@tailwindcss/typography": "^0.5.16",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vitejs/plugin-vue-jsx": "^4.1.1",
-        "autoprefixer": "^9.8.8",
+        "autoprefixer": "^10.4.21",
         "babel-plugin-syntax-jsx": "^6.18.0",
         "less": "^4.2.2",
         "naive-ui": "^2.41.0",
         "postcss": "^8.5.3",
+        "tailwindcss": "^4.0.17",
         "vite": "^6.1.0"
     }
 }

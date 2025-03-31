@@ -1,4 +1,5 @@
 <template>
+
     <!-- 添加滚动容器 -->
     <div ref="scrollContainer" class="scroll-container duration-100"><!-- 使我的网站旋转 animate-spin -->
         <n-config-provider>
@@ -14,6 +15,8 @@
 </template>
 
 <script setup>
+
+
 // import { ref, onMounted, onBeforeUnmount } from 'vue'
 // import Scrollbar from 'smooth-scrollbar'
 
@@ -113,40 +116,40 @@
     --n-button-icon-color-hover: #2d8cf0;
 }
 
-@media (prefers-color-scheme: dark) {
-    ::-webkit-scrollbar-thumb {
-        background: #ffffff36;
-        /* 滑块颜色 */
-        border-radius: 4px;
-    }
 
-    ::-webkit-scrollbar-thumb {
-        background: #c9c9c91e;
-        /* 滑块颜色 */
-        border-radius: 4px;
-    }
-
-    :root {
-        /* 深色模式变量 */
-        --n-item-color: rgba(255, 255, 255, 0.04);
-        --n-item-color-hover: rgba(255, 255, 255, 0.08);
-        --n-item-color-pressed: rgba(255, 255, 255, 0.12);
-        --n-item-border-color: rgba(255, 255, 255, 0.09);
-        --n-item-border-color-hover: rgba(255, 255, 255, 0.15);
-        --n-item-border-color-active: #2d8cf0;
-        --n-item-text-color: rgba(139, 139, 139, 0.82);
-        --n-item-text-color-hover: #2d8cf0;
-        --n-item-text-color-pressed: #1a7ad9;
-        --n-item-text-color-active: #979797;
-        --n-item-border-color-disabled: rgba(255, 255, 255, 0.05);
-        --n-item-color-disabled: rgba(255, 255, 255, 0.02);
-        --n-item-text-color-disabled: rgba(255, 255, 255, 0.3);
-        --n-button-color: rgba(255, 255, 255, 0.04);
-        --n-button-color-hover: rgba(255, 255, 255, 0.08);
-        --n-button-icon-color: rgba(255, 255, 255, 0.5);
-        --n-button-icon-color-hover: #2d8cf0;
-    }
+.dark ::-webkit-scrollbar-thumb {
+    background: #ffffff36;
+    /* 滑块颜色 */
+    border-radius: 4px;
 }
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #c9c9c91e;
+    /* 滑块颜色 */
+    border-radius: 4px;
+}
+
+.dark :root {
+    /* 深色模式变量 */
+    --n-item-color: rgba(255, 255, 255, 0.04);
+    --n-item-color-hover: rgba(255, 255, 255, 0.08);
+    --n-item-color-pressed: rgba(255, 255, 255, 0.12);
+    --n-item-border-color: rgba(255, 255, 255, 0.09);
+    --n-item-border-color-hover: rgba(255, 255, 255, 0.15);
+    --n-item-border-color-active: #2d8cf0;
+    --n-item-text-color: rgba(139, 139, 139, 0.82);
+    --n-item-text-color-hover: #2d8cf0;
+    --n-item-text-color-pressed: #1a7ad9;
+    --n-item-text-color-active: #979797;
+    --n-item-border-color-disabled: rgba(255, 255, 255, 0.05);
+    --n-item-color-disabled: rgba(255, 255, 255, 0.02);
+    --n-item-text-color-disabled: rgba(255, 255, 255, 0.3);
+    --n-button-color: rgba(255, 255, 255, 0.04);
+    --n-button-color-hover: rgba(255, 255, 255, 0.08);
+    --n-button-icon-color: rgba(255, 255, 255, 0.5);
+    --n-button-icon-color-hover: #2d8cf0;
+}
+
 
 /* CSS */
 @media (max-width: 768px) {
@@ -413,31 +416,31 @@ header {
 }
 
 /* 深色模式下的样式 */
-@media (prefers-color-scheme: dark) {
 
-    .n-result .n-result-header .n-result-header__title {
-        color: rgb(195, 204, 211) !important;
-    }
 
-    .n-result {
-        color: rgb(145, 154, 161) !important;
-    }
+.dark .n-result .n-result-header .n-result-header__title {
+    color: rgb(195, 204, 211) !important;
+}
 
-    .n-tag {
-        background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
-        color: rgb(145, 154, 161);
-    }
+.dark .n-result {
+    color: rgb(145, 154, 161) !important;
+}
 
-    .n-input {
-        background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
+.dark .n-tag {
+    background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
+    color: rgb(145, 154, 161);
+}
 
-    }
-
-    .n-input__input-el {
-        color: white !important;
-    }
+.dark .n-input {
+    background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
 
 }
+
+.dark .n-input__input-el {
+    color: white !important;
+}
+
+
 
 pre {
     white-space: pre-wrap !important;

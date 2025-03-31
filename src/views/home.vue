@@ -496,16 +496,14 @@ canvas {
     cursor: pointer !important;
 }
 
-@media (prefers-color-scheme: dark) {
 
-    .n-card {
-        background-color: color-mix(in oklab, var(--color-white) 0%, transparent) !important;
-        border-color: rgba(255, 255, 255, 0.131) !important;
-        margin-bottom: 16px !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        border-radius: 0.5rem !important;
-        cursor: pointer !important;
-    }
+.dark .n-card {
+    background-color: color-mix(in oklab, var(--color-white) 0%, transparent) !important;
+    border-color: rgba(255, 255, 255, 0.131) !important;
+    margin-bottom: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0.5rem !important;
+    cursor: pointer !important;
 }
 </style>

@@ -12,7 +12,7 @@
 
 
                     <!-- 桌面端导航 -->
-                    <div class="hidden md:flex flex-row items-center mx-8 z-50">
+                    <div class="hidden md:flex flex-row items-center z-50">
                         <n-button v-for="(menu, index) in menus" :key="index" @click="handleMenuClick(menu.href)"
                             quaternary style="margin: 0px 4px;" :theme-overrides="themeOverrides">
                             {{ menu.name }}
@@ -30,15 +30,15 @@
                         </n-popselect>
                         <!-- 分割 -->
                         <!-- <div class="h-4 mr-4 w-[1px] bg-gray-300 dark:bg-slate-800"></div> -->
-                        <div class="mx-2"></div>
-                        <div class="bg-gray-900/5 dark:bg-white/5 rounded-md">
+
+                        <div class="bg-gray-900/5 flex flex-row dark:bg-white/5 rounded-md">
                             <n-button v-for="(menu, index) in custommenus" :key="index"
                                 @click="handleMenuClick(menu.href)" quaternary>
                                 {{ menu.name }}
                             </n-button>
                         </div>
                     </div>
-
+                    <Darkmode></Darkmode>
 
                     <!-- 移动端展开式菜单 -->
                     <div class="md:hidden flex items-center">
@@ -115,6 +115,8 @@ import axios from 'axios';
 import { useCategoryStore } from '../stores/AdminStore';
 import { useRoute, useRouter } from 'vue-router';
 import 'css-doodle'
+
+import Darkmode from './Darkmode.vue';
 // 添加背景图片引用
 const backgroundImage = ref(null);
 const settingsData = ref(null);
@@ -305,16 +307,15 @@ header {
     transition: transform 0.5s ease-in-out;
 }
 
-@media (prefers-color-scheme: dark) {
-    .n-button {
-        background-color: color-mix(in oklab, var(--color-white) 0%, transparent) !important;
-        color: #E5E7EB !important;
-    }
-
-    .n-button:hover {
-        background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
-    }
+.dark .n-button {
+    background-color: color-mix(in oklab, var(--color-white) 0%, transparent) !important;
+    color: #E5E7EB !important;
 }
+
+.dark .n-button:hover {
+    background-color: color-mix(in oklab, var(--color-white) 5%, transparent) !important;
+}
+
 
 .absolute {
     /* 添加 will-change 优化动画性能 */

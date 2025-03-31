@@ -125,12 +125,11 @@ const getImageUrl = (name) => {
 </script>
 
 <style scoped>
-@media (prefers-color-scheme: dark) {
-    .n-button {
-        background-color: color-mix(in oklab, var(--color-white) 10%, transparent) !important;
-        color: #E5E7EB !important;
-    }
+.dark .n-button {
+    background-color: color-mix(in oklab, var(--color-white) 10%, transparent) !important;
+    color: #E5E7EB !important;
 }
+
 
 .menus {
     display: flex;
