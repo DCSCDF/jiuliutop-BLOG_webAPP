@@ -57,19 +57,13 @@ git clone https://github.com/DCSCDF/jiuliutop-BLOG_webAPP
 cd JIULIUTOP-APP
 
 # 安装依赖
-npm install 或 pnpm install
+npm install
 
 # 启动开发服务器
-npm run dev 或 pnpm dev
+npm run server
 
 # 访问地址
 http://localhost:5173/
-
-# 构建服务端启动版本
-npm run build 或 pnpm build
-
-# 预览构建结果
-npm run preview 或 pnpm preview
 ```
 ## 如果需要进一步调整或补充内容，请随时告诉我！ 😊
 
