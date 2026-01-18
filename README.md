@@ -1,6 +1,6 @@
 # JIULIUTOP-APP 项目结构文档
 
-## 📁 完整目录树
+## 完整目录树
 ```bash
 JIULIUTOP-APP/
 ├── .vscode/               # VSCode编辑器配置目录
@@ -32,8 +32,9 @@ JIULIUTOP-APP/
 ├── postcss.config.js      # PostCSS配置
 ├── README.md              # 项目说明文档
 └── vite.config.js         # Vite构建配置
+
 ```
-## 🚀 项目特性
+## 项目特性
 - ​**模块化设计**：项目采用模块化设计，包含 `assets`、`components`、`views` 等目录，便于扩展和维护。
 - ​**现代化技术栈**：基于 Vue 3.x + Vite 构建，支持高效开发和快速构建。
 - ​**路由与状态管理**：使用 Vue Router 和 Pinia/Vuex 管理页面路由和全局状态。
@@ -46,9 +47,9 @@ JIULIUTOP-APP/
 | 文章详情   | `detail.vue`   | 使用富文本编辑器展示的详情页面   |
 | 后台管理   | `dashboard/`   | 含数据可视化的管理控制台         |
 | 用户后台   | `login.vue`    | 后台登录                       |
-| 友情链接   | `links.vue`    | 朋友们的链接聚合页               |
+| 友情链接   | `links.vue`    | 链接页               |
 
-## 🛠️ 快速启动
+## 启动
 
 ### 开发环境
 ```bash
@@ -65,7 +66,7 @@ npm run server
 # 访问地址
 http://localhost:5173/
 ```
-## 如果需要进一步调整或补充内容，请随时告诉我！ 😊
+
 
 
 
